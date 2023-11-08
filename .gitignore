@@ -19,3 +19,11 @@
 
 # Go workspace file
 go.work
+bin/
+.idea/
+.env
+
+api/gen
+api/doc
+.temp
+/api/buf.lock
