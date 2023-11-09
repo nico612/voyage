@@ -1,12 +1,10 @@
-package miniblog
+package internal
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/nico612/go-project/examples/miniblog/internal/pkg/core"
-	"github.com/nico612/go-project/examples/miniblog/internal/pkg/errno"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
 	mw "github.com/nico612/go-project/examples/miniblog/internal/pkg/middleware"
 	"github.com/nico612/go-project/pkg/version/verflag"
@@ -89,16 +87,9 @@ func run() error {
 	mws := []gin.HandlerFunc{gin.Recovery(), mw.NoCache, mw.Secure, mw.Cors, mw.RequestID()}
 	g.Use(mws...)
 
-	// 注册 404 Handle
-	g.NoRoute(func(c *gin.Context) {
-		core.WriteResponse(c, errno.ErrPageNotFound, nil)
-	})
-
-	// 注册 /healthz handle
-	g.GET("/healthz", func(c *gin.Context) {
-		log.C(c).Infow("Healthz function called")
-		core.WriteResponse(c, nil, map[string]string{"status": "ok"})
-	})
+	if err := installRouters(g); err != nil {
+		return err
+	}
 
 	// 创建 HTTP Server 实例
 	httpsrv := &http.Server{Addr: viper.GetString("addr"), Handler: g}

@@ -1,8 +1,8 @@
-package miniblog
+package internal
 
 import (
+	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
-	"github.com/nico612/go-project/examples/miniblog/internal/store"
 	"github.com/nico612/go-project/pkg/db"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

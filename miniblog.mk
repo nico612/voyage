@@ -36,7 +36,7 @@ COMMON_SELF_DIR:=$(dir $(lastword $(MAKEFILE_LIST)))
 # 获取项目根目录绝对路径。
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/ && pwd -P))
 # bin 目录
-BIN_DIR := $(ROOT_DIR)/bin/miniblog
+BIN_DIR := $(ROOT_DIR)/examples/miniblog/bin/miniblog
 
 # 构建产物，临时文件存放目录
 OUTPUT_DIR := $(ROOT_DIR)/_output
@@ -69,11 +69,11 @@ init:
 build: tidy
 	mkdir -p bin
 	# go build -ldflags "-X main.Version=$(VERSION)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
-	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
+	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/examples/miniblog/cmd/miniblog/main.go
 
 .PHONY: run
 run: build
-	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/configs/miniblog.yaml
+	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/examples/miniblog/configs/miniblog.yaml
 
 .PHONY: generate
 # generate

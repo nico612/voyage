@@ -2,7 +2,7 @@ package store
 
 import (
 	"context"
-	"github.com/nico612/go-project/examples/miniblog/internal/model"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/model"
 	"gorm.io/gorm"
 )
 
