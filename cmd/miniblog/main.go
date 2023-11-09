@@ -1,11 +1,10 @@
 package main
 
 import (
-	"os"
-
+	"github.com/nico612/go-project/examples/miniblog"
 	_ "go.uber.org/automaxprocs"
 
-	"github.com/nico612/go-project/internal/miniblog"
+	"os"
 )
 
 func main() {

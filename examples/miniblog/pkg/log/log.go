@@ -160,3 +160,8 @@ func Fatalw(msg string, keysAndValues ...interface{}) {
 func (l *zapLogger) Fatalw(msg string, keysAndValues ...interface{}) {
 	l.z.Sugar().Fatalw(msg, keysAndValues...)
 }
+
+func (l *zapLogger) clone() *zapLogger {
+	lc := *l
+	return &lc
+}

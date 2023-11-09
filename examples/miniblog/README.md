@@ -3,6 +3,33 @@
 教程地址：https://juejin.cn/book/7176608782871429175
 
 
+## 项目
+
+### 初始化
+```shell
+make init -f miniblog.mk
+```
+### build
+
+```shell
+make build -f miniblog.mk
+```
+
+### 运行
+```shell
+make run -f miniblog.mk
+```
+
+### 打印版本号
+```shell
+
+./bin/miniblog/miniblog --version
+
+#打印json格式的版本号
+./bin/miniblog/miniblog --version=raw 
+
+```
+
 ## 开发工具
 
 ### Swagger 
@@ -72,3 +99,5 @@ bin = "_output/miniblog"
 ## 三方库
 - 日志库采用： logrus + zap，教程：https://juejin.cn/book/7176608782871429175/section/7176610186029695037
 
+## grpc + grpc-gateway 
+[grpc-hello-world：可用的代码（亲测可用）](https://github.com/eddycjy/grpc-hello-world) + [教程（Grpc+Grpc Gateway实践二 有些复杂的Hello World）；](https://segmentfault.com/a/1190000013408485)
