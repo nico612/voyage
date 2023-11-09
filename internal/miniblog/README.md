@@ -69,3 +69,6 @@ bin = "_output/miniblog"
 - cobra：[现代化的命令行框架-Cobra全解。](https://github.com/marmotedu/geekbang-go/blob/master/%E7%8E%B0%E4%BB%A3%E5%8C%96%E7%9A%84%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%A1%86%E6%9E%B6-Cobra%E5%85%A8%E8%A7%A3.md)
   安装： go get -u github.com/spf13/cobra@latest
 
+## 三方库
+- 日志库采用： logrus + zap，教程：https://juejin.cn/book/7176608782871429175/section/7176610186029695037
+

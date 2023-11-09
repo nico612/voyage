@@ -3,6 +3,8 @@ package miniblog
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/nico612/go-project/internal/miniblog/pkg/log"
+	"github.com/nico612/go-project/pkg/version/verflag"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,6 +24,14 @@ func NewMiniBlogCommand() *cobra.Command {
 		SilenceUsage: true,
 		// 指定调用 cmd.Execute() 时，执行的 Run 函数，函数执行失败会返回错误信息
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			// 如果 `--version=true`, 则打印版本并退出
+			verflag.PrintAndExitIfRequested()
+
+			// 初始化日志
+			log.Init(logOptions())
+			defer log.Sync() // Sync 将缓存中的日志刷新到磁盘文件中
+
 			return run()
 		},
 		// 这里设置命令运行时，不需要指定命令行参数
@@ -47,18 +57,20 @@ func NewMiniBlogCommand() *cobra.Command {
 	// Cobra 也支持本地标志，本地标志只能在其所绑定的命令上使用
 	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
+	// 添加 --version 标志
+	verflag.AddFlags(cmd.PersistentFlags())
+
 	return cmd
 }
 
 // run 函数实际的业务代码入口函数
 func run() error {
-	fmt.Println("Hello MiniBlog!")
 
 	// 打印所有的配置项及其值, viper.AllSettings()返回所有的配置内容；
 	settings, _ := json.Marshal(viper.AllSettings())
-	fmt.Println(string(settings))
+	log.Infow(string(settings))
 	// 打印 db -> username 配置项的值
-	fmt.Println(viper.GetString("mysql.username"))
+	log.Infow(viper.GetString("db.username"))
 
 	return nil
 }

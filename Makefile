@@ -1,6 +1,14 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-VERSION:=$(shell git describe --tags --always)
+# VERSION:=$(shell git describe --tags --always)
+
+## 指定应用使用的 version 包，会通过 `-ldflags -X` 向该包中指定的变量注入值
+VERSION_PACKAGE=github.com/marmotedu/miniblog/pkg/version
+
+## 定义 VERSION 语义化版本号
+ifeq ($(origin VERSION), undefined)
+VERSION := $(shell git describe --tags --always --match='v*')
+endif
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.

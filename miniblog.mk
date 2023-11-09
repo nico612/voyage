@@ -1,6 +1,32 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
-VERSION:=$(shell git describe --tags --always)
+
+# VERSION:=$(shell git describe --tags --always)
+## 指定应用使用的 version 包，会通过 `-ldflags -X` 向该包中指定的变量注入值
+VERSION_PACKAGE=github.com/nico612/go-project/internal/miniblog/pkg/version
+
+## 定义 VERSION 语义化版本号
+ifeq ($(origin VERSION), undefined)
+### 获取版本号。
+### --tags ：使用所有的标签，而不是只使用带注释的标签（annotated tag）。git tag <tagname> 生成一个不带注释的标签，git tag -a <tagname> -m '<message>'生成一个带注释的标签；
+### --always：如果仓库没有可用的标签，那么使用 commit 缩写来替代标签；
+### --match <pattern>：只考虑与给定模式相匹配的标签。
+VERSION := $(shell git describe --tags --always --match='v*')
+endif
+
+## 检查代码仓库是否是 dirty（默认dirty）
+GIT_TREE_STATE:="dirty"
+ifeq (, $(shell git status --porcelain 2>/dev/null))
+  GIT_TREE_STATE="clean"
+endif
+GIT_COMMIT:=$(shell git rev-parse HEAD) ### git rev-parse HEAD 获取构建时的 Commit ID；
+
+GO_LDFLAGS += \
+  -X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
+  -X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
+  -X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
+  -X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ') ### date -u +'%Y-%m-%dT%H:%M:%SZ' 命令获取构建时间；
+
 
 # ./ 根目录
 # MAKEFILE_LIST 变量是 Makefile 的内置变量，表示：make 所需要处理的 makefile 文件列表，当前 makefile 的文件名总是位于列表的最后，文件名之间以空格进行分隔；
@@ -42,10 +68,12 @@ init:
 .PHONY: build
 build: tidy
 	mkdir -p bin
-	go build -ldflags "-X main.Version=$(VERSION)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
+	# go build -ldflags "-X main.Version=$(VERSION)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
+	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
 
-# .PHONY: run
-# run:
+.PHONY: run
+run:
+	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/configs/miniblog.yaml
 
 .PHONY: generate
 # generate
