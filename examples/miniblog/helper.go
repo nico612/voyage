@@ -2,6 +2,8 @@ package miniblog
 
 import (
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
+	"github.com/nico612/go-project/examples/miniblog/internal/store"
+	"github.com/nico612/go-project/pkg/db"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -71,4 +73,28 @@ func logOptions() *log.Options {
 		Format:            viper.GetString("log.format"),
 		OutputPaths:       viper.GetStringSlice("log.output-paths"),
 	}
+}
+
+// initStore 读取 db 配置，创建 gorm.DB 实例，并初始化miniblog store层
+func initStore() error {
+	dbOptions := &db.MySQLOptions{
+		Host:                  viper.GetString("mysql.host"),
+		Username:              viper.GetString("mysql.username"),
+		Password:              viper.GetString("mysql.password"),
+		Database:              viper.GetString("mysql.database"),
+		MaxIdleConnections:    viper.GetInt("mysql.max-idle-connections"),
+		MaxOpenConnections:    viper.GetInt("mysql.max-open-connections"),
+		MaxConnectionLifeTime: viper.GetDuration("mysql.max-connection-life-time"),
+		LogLevel:              viper.GetInt("mysql.log-level"),
+	}
+
+	ins, err := db.NewMySQL(dbOptions)
+	if err != nil {
+		return err
+	}
+
+	// 初始化 store 层
+	_ = store.NewStore(ins)
+
+	return nil
 }

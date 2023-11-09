@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/core"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/errno"
-	log2 "github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
-	middleware2 "github.com/nico612/go-project/examples/miniblog/internal/pkg/middleware"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
+	mw "github.com/nico612/go-project/examples/miniblog/internal/pkg/middleware"
 	"github.com/nico612/go-project/pkg/version/verflag"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -39,8 +39,8 @@ func NewMiniBlogCommand() *cobra.Command {
 			verflag.PrintAndExitIfRequested()
 
 			// 初始化日志
-			log2.Init(logOptions())
-			defer log2.Sync() // Sync 将缓存中的日志刷新到磁盘文件中
+			log.Init(logOptions())
+			defer log.Sync() // Sync 将缓存中的日志刷新到磁盘文件中
 
 			return run()
 		},
@@ -76,12 +76,17 @@ func NewMiniBlogCommand() *cobra.Command {
 // run 函数实际的业务代码入口函数
 func run() error {
 
+	// 初始化 store 层
+	if err := initStore(); err != nil {
+		return err
+	}
+
 	// 设置Gin模式
 	gin.SetMode(viper.GetString("runmode"))
 
 	// 创建 Gin 引擎
 	g := gin.New()
-	mws := []gin.HandlerFunc{gin.Recovery(), middleware2.NoCache, middleware2.Secure, middleware2.Cors, middleware2.RequestID()}
+	mws := []gin.HandlerFunc{gin.Recovery(), mw.NoCache, mw.Secure, mw.Cors, mw.RequestID()}
 	g.Use(mws...)
 
 	// 注册 404 Handle
@@ -91,7 +96,7 @@ func run() error {
 
 	// 注册 /healthz handle
 	g.GET("/healthz", func(c *gin.Context) {
-		log2.C(c).Infow("Healthz function called")
+		log.C(c).Infow("Healthz function called")
 		core.WriteResponse(c, nil, map[string]string{"status": "ok"})
 	})
 
@@ -100,11 +105,11 @@ func run() error {
 
 	// 运行HTTP 服务器
 	// 打印一条日志，用来提示HTTP服务已经起来，方便排障
-	log2.Infow("Start to listening the incoming requests on http address", "addr", viper.GetString("addr"))
+	log.Infow("Start to listening the incoming requests on http address", "addr", viper.GetString("addr"))
 
 	go func() {
 		if err := httpsrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log2.Fatalw(err.Error())
+			log.Fatalw(err.Error())
 		}
 	}()
 
@@ -115,7 +120,7 @@ func run() error {
 	// kill -9 发送 syscall.SIGKILL 信号，但是不能被捕获，所以不需要添加它
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM) // 此处不会阻塞
 	<-quit                                               // 阻塞在此，当接收到上述两种信号时才会往下执行
-	log2.Infow("Shutting down server ...")
+	log.Infow("Shutting down server ...")
 
 	// 创建 ctx 用于通知服务器 goroutine, 它有 10 秒时间完成当前正在处理的请求
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -123,10 +128,10 @@ func run() error {
 
 	// 10 秒内优雅关闭服务（将未处理完的请求处理完再关闭服务），超过 10 秒就超时退出
 	if err := httpsrv.Shutdown(ctx); err != nil {
-		log2.Errorw("Insecure Server forced to shutdown", "err", err)
+		log.Errorw("Insecure Server forced to shutdown", "err", err)
 		return err
 	}
-	log2.Infow("Server exiting")
+	log.Infow("Server exiting")
 
 	return nil
 }
