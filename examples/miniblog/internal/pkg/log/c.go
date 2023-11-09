@@ -2,7 +2,7 @@ package log
 
 import (
 	"context"
-	"github.com/nico612/go-project/examples/miniblog/pkg/known"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/known"
 	"go.uber.org/zap"
 )
 

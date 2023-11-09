@@ -88,6 +88,45 @@ bin = "_output/miniblog"
 - 启动 air 工具。air # 默认使用当前目录下的 .air.toml 配置，你可以通过 `-c` 选项指定配置，例如：`air -c .air.toml`
 
 
+## db2struct 数据库表自动生成Model
+
+```shell
+$ mkdir -p internal/pkg/model
+$ cd internal/pkg/model
+$ db2struct --gorm --no-json -H 127.0.0.1 -d miniblog -t user --package model --struct UserM -u miniblog -p '12345678' --target=user.go
+$ db2struct --gorm --no-json -H 127.0.0.1 -d miniblog -t post --package model --struct PostM -u miniblog -p '12345678' --target=post.go
+```
+命令行参数：
+```shell
+$ db2struct  -h
+Usage of db2struct:
+        db2struct [-H] [-p] [-v] --package pkgName --struct structName --database databaseName --table tableName
+Options:
+  -H, --host=         Host to check mariadb status of
+  --mysql_port=3306   Specify a port to connect to
+  -t, --table=        Table to build struct from
+  -d, --database=nil  Database to for connection
+  -u, --user=user     user to connect to database
+  -v, --verbose       Enable verbose output
+  --package=          name to set for package
+  --struct=           name to set for struct
+  --json              Add json annotations (default)
+  --no-json           Disable json annotations
+  --gorm              Add gorm annotations (tags)
+  --guregu            Add guregu null types
+  --target=           Save file path
+  -p, --password=     Mysql password
+  -h, --help          Show usage message
+  --version           Show version
+
+```
+
+### mysqldump 导出数据库和表的SQL语句
+
+```shell
+$ mysqldump -h127.0.0.1 -uroot --databases miniblog -p'12345678' --add-drop-database --add-drop-table --add-drop-trigger --add-locks --no-data > configs/miniblog.sql
+```
+
 
 ## 应用启动构建框架
 

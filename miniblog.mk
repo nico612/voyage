@@ -72,7 +72,7 @@ build: tidy
 	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
 
 .PHONY: run
-run:
+run: build
 	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/configs/miniblog.yaml
 
 .PHONY: generate

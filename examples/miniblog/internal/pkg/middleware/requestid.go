@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/nico612/go-project/examples/miniblog/pkg/known"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/known"
 )
 
 func RequestID() gin.HandlerFunc {
