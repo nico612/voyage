@@ -2,6 +2,18 @@
 runmode: debug
 
 addr: :8080                  # HTTP 服务器监听地址
+jwt-secret: Rtg8BPKNEf2mB4mgvKONGPZZQSaJWNLijxR42qRgq0iBb5 # JWT 签发密钥
+
+# GRPC 相关配置
+grpc:
+  addr: :9090 # GRPC 服务器监听地址
+
+# HTTPS 服务器相关配置
+tls:
+  addr: :8443 # HTTPS 服务器监听地址
+  cert: ./examples/miniblog/_output/cert/server.crt # 服务端证书文件
+  key: ./examples/miniblog/_output/cert/server.key # 服务端私钥文件
+
 
 # MySQL 数据库相关配置
 mysql:

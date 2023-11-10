@@ -30,6 +30,14 @@ make run -f miniblog.mk
 
 ```
 
+
+### 启动HTTPS服务
+#### 生成证书
+`make ca -f miniblog.mk`
+
+#### 启动
+`make run -f miniblog.mk` 
+
 ## 开发工具
 
 ### Swagger 

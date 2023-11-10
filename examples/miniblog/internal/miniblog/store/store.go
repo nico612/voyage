@@ -8,6 +8,8 @@ import (
 // IStore 定义了 Store 层需要实现的方法.
 type IStore interface {
 	Users() UserStore
+	Posts() PostStore
+	DB() *gorm.DB
 }
 
 var (
@@ -36,4 +38,12 @@ func NewStore(db *gorm.DB) *datastore {
 
 func (ds *datastore) Users() UserStore {
 	return newUsers(ds.db)
+}
+
+func (ds *datastore) Posts() PostStore {
+	return newPosts(ds.db)
+}
+
+func (ds *datastore) DB() *gorm.DB {
+	return ds.db
 }

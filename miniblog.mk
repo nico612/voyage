@@ -34,13 +34,16 @@ GO_LDFLAGS += \
 # 函数 $(dir <names...>) 从文件名序列 <names> 中取出目录部分。目录部分是指最后一个反斜杠（/）之前的部分。如果没有反斜杠，那么返回 ./；
 COMMON_SELF_DIR:=$(dir $(lastword $(MAKEFILE_LIST)))
 # 获取项目根目录绝对路径。
-ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/ && pwd -P))
+ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/ && pwd -P))/examples/miniblog
+
 # bin 目录
-BIN_DIR := $(ROOT_DIR)/examples/miniblog/bin/miniblog
+BIN_DIR := $(ROOT_DIR)/bin/miniblog
 
 # 构建产物，临时文件存放目录
 OUTPUT_DIR := $(ROOT_DIR)/_output
 
+# Protobuf 文件存放路径
+APIROOT=$(ROOT_DIR)/pkg/proto
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -54,6 +57,10 @@ else
 	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
 	API_PROTO_FILES=$(shell find api -name *.proto)
 endif
+
+.PHONY: test
+.test:
+	echo $(ROOT_DIR)
 
 .PHONY: all
 all: format build # 指定执行 make 命令时默认需要执行的规则目标
@@ -69,11 +76,11 @@ init:
 build: tidy
 	mkdir -p bin
 	# go build -ldflags "-X main.Version=$(VERSION)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
-	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/examples/miniblog/cmd/miniblog/main.go
+	go build -v -ldflags "$(GO_LDFLAGS)" -o $(BIN_DIR)/miniblog $(ROOT_DIR)/cmd/miniblog/main.go
 
 .PHONY: run
 run: build
-	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/examples/miniblog/configs/miniblog.yaml
+	$(BIN_DIR)/miniblog -c $(ROOT_DIR)/configs/miniblog.yaml
 
 .PHONY: generate
 # generate
@@ -86,6 +93,20 @@ clean:
 	-rm -vrf api/doc
 	-rm -vrf api/gen
 
+.PHONY: ca
+ca: ## 生成 CA 文件
+	@mkdir -p $(OUTPUT_DIR)/cert
+	@openssl genrsa -out $(OUTPUT_DIR)/cert/ca.key 1024 # 生成根证书私钥
+	@openssl req -new -key $(OUTPUT_DIR)/cert/ca.key -out $(OUTPUT_DIR)/cert/ca.csr \
+        -subj "/C=CN/ST=Guangdong/L=Shenzhen/O=devops/OU=it/CN=127.0.0.1/emailAddress=nosbelm@qq.com" # 2. 生成请求文件
+	@openssl x509 -req -in $(OUTPUT_DIR)/cert/ca.csr -signkey $(OUTPUT_DIR)/cert/ca.key -out $(OUTPUT_DIR)/cert/ca.crt # 3. 生成根证书
+	@openssl genrsa -out $(OUTPUT_DIR)/cert/server.key 1024 # 4. 生成服务端私钥
+	@openssl rsa -in $(OUTPUT_DIR)/cert/server.key -pubout -out $(OUTPUT_DIR)/cert/server.pem # 5. 生成服务端公钥
+	@openssl req -new -key $(OUTPUT_DIR)/cert/server.key -out $(OUTPUT_DIR)/cert/server.csr \
+        -subj "/C=CN/ST=Guangdong/L=Shenzhen/O=serverdevops/OU=serverit/CN=127.0.0.1/emailAddress=nosbelm@qq.com" # 6. 生成服务端向 CA 申请签名的 CSR
+	@openssl x509 -req -CA $(OUTPUT_DIR)/cert/ca.crt -CAkey $(OUTPUT_DIR)/cert/ca.key \
+        -CAcreateserial -in $(OUTPUT_DIR)/cert/server.csr -out $(OUTPUT_DIR)/cert/server.crt # 7. 生成服务端带有 CA 签名的证书
+
 .PHONY: format
 format: # 格式化go源码
 	gofmt -s -w ./
@@ -97,6 +118,18 @@ swagger: # 启动swagger 在线文档
 .PHONY: tidy
 tidy:
 	go mod tidy
+
+.PHONY: protoc
+protoc: # 编译 protobuf 文件 https://juejin.cn/book/7176608782871429175/section/7179876228407492645#heading-7
+	@echo "============> Generate protobuf files"
+	@protoc                                            \
+        --proto_path=$(APIROOT)                          \
+        --proto_path=$(ROOT_DIR)/third_party             \
+        --go_out=paths=source_relative:$(APIROOT)        \
+        --go-grpc_out=paths=source_relative:$(APIROOT)   \
+        $(shell find $(APIROOT) -name *.proto)
+
+
 # show help
 help:
 	@echo ''

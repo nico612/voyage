@@ -1,4 +1,4 @@
-package internal
+package miniblog
 
 import (
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"

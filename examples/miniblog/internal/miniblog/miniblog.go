@@ -1,15 +1,22 @@
-package internal
+package miniblog
 
 import (
 	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/controller/v1/user"
+	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/known"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
 	mw "github.com/nico612/go-project/examples/miniblog/internal/pkg/middleware"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/token"
+	pb "github.com/nico612/go-project/examples/miniblog/pkg/proto/miniblog/v1"
 	"github.com/nico612/go-project/pkg/version/verflag"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -79,6 +86,9 @@ func run() error {
 		return err
 	}
 
+	// 设置 token 包的签发密钥，用于 token 包 token 的签发和解析
+	token.Init(viper.GetString("jwt-secret"), known.XUsernameKey)
+
 	// 设置Gin模式
 	gin.SetMode(viper.GetString("runmode"))
 
@@ -91,18 +101,14 @@ func run() error {
 		return err
 	}
 
-	// 创建 HTTP Server 实例
-	httpsrv := &http.Server{Addr: viper.GetString("addr"), Handler: g}
+	// 创建并运行 HTTP 服务器
+	httpsrv := startInsecureServer(g)
 
-	// 运行HTTP 服务器
-	// 打印一条日志，用来提示HTTP服务已经起来，方便排障
-	log.Infow("Start to listening the incoming requests on http address", "addr", viper.GetString("addr"))
+	// 创建并运行 HTTPS 服务器
+	httpssrv := startSecureServer(g)
 
-	go func() {
-		if err := httpsrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalw(err.Error())
-		}
-	}()
+	// 创建并运行 GRPC 服务器
+	grpcsrv := startGRPCServer()
 
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。
 	quit := make(chan os.Signal, 1)
@@ -122,7 +128,78 @@ func run() error {
 		log.Errorw("Insecure Server forced to shutdown", "err", err)
 		return err
 	}
+
+	// 关停https服务
+	if err := httpssrv.Shutdown(ctx); err != nil {
+		log.Errorw("Secure Server forced to shutdown", "err", err)
+		return err
+	}
+
+	// 关停grpc服务
+	grpcsrv.GracefulStop()
+
 	log.Infow("Server exiting")
 
 	return nil
+}
+
+// startInsecureServer 创建并运行 HTTP 服务器.
+func startInsecureServer(g *gin.Engine) *http.Server {
+	// 创建 HTTP Server 实例
+	httpsrv := &http.Server{Addr: viper.GetString("addr"), Handler: g}
+
+	// 运行 HTTP 服务器。在 goroutine 中启动服务器，它不会阻止下面的正常关闭处理流程
+	// 打印一条日志，用来提示 HTTP 服务已经起来，方便排障
+	log.Infow("Start to listening the incoming requests on http address", "addr", viper.GetString("addr"))
+	go func() {
+		if err := httpsrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalw(err.Error())
+		}
+	}()
+
+	return httpsrv
+}
+
+// startSecureServer 创建并运行 HTTPS 服务器.
+// miniblog 开启 HTTPS 的方式为：使用 HTTPS 的数据传输加密能力，开启 HTTPS 单向认证，验证服务端合法性。服务端对客户端的认证则采用 JWT Token 认证。
+// https://juejin.cn/book/7176608782871429175/section/7179875891852345400
+func startSecureServer(g *gin.Engine) *http.Server {
+	// 创建 HTTPS Server 实例
+	httpssrv := &http.Server{Addr: viper.GetString("tls.addr"), Handler: g}
+
+	// 运行 HTTPS 服务器。在 goroutine 中启动服务器，它不会阻止下面的正常关闭处理流程
+	// 打印一条日志，用来提示 HTTPS 服务已经起来，方便排障
+	log.Infow("Start to listening the incoming requests on https address", "addr", viper.GetString("tls.addr"))
+	cert, key := viper.GetString("tls.cert"), viper.GetString("tls.key")
+	if cert != "" && key != "" {
+		go func() {
+			if err := httpssrv.ListenAndServeTLS(cert, key); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				log.Fatalw(err.Error())
+			}
+		}()
+	}
+	return httpssrv
+}
+
+// startGRPCServer 创建并运行 GRPC 服务器.
+func startGRPCServer() *grpc.Server {
+	lis, err := net.Listen("tcp", viper.GetString("grpc.addr"))
+	if err != nil {
+		log.Fatalw("Failed to listen", "err", err)
+	}
+
+	// 创建 GRPC Server 实例
+	grpcsrv := grpc.NewServer()
+	pb.RegisterMiniBlogServer(grpcsrv, user.New(store.S, nil))
+
+	// 运行 GRPC 服务器。在 goroutine 中启动服务器，它不会阻止下面的正常关闭处理流程
+	// 打印一条日志，用来提示 GRPC 服务已经起来，方便排障
+	log.Infow("Start to listening the incoming requests on grpc address", "addr", viper.GetString("grpc.addr"))
+	go func() {
+		if err := grpcsrv.Serve(lis); err != nil {
+			log.Fatalw(err.Error())
+		}
+	}()
+
+	return grpcsrv
 }

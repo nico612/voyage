@@ -1,12 +1,14 @@
 package biz
 
 import (
+	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/biz/post"
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/biz/user"
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 )
 
 type IBiz interface {
 	Users() user.UserBiz
+	Posts() post.PostBiz
 }
 
 // biz 是IBiz的一个具体实现，其依赖 store 层
@@ -25,4 +27,9 @@ func NewBiz(ds store.IStore) *biz {
 // Users 返回一个实现了 UserBiz 接口的实例
 func (b *biz) Users() user.UserBiz {
 	return user.New(b.ds)
+}
+
+// Posts 返回一个实现了 PostBiz 接口实例
+func (b *biz) Posts() post.PostBiz {
+	return post.New(b.ds)
 }

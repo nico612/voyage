@@ -1,0 +1,71 @@
+// 更多知识点： https://juejin.cn/book/7176608782871429175/section/7179876228407492645
+
+syntax = "proto3"; // 告诉编译器此文件使用什么版本语法
+
+// package 关键字指定生成的 .pb.go 文件所在的包名。
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+// option 关键字用来对 .proto 文件进行一些设置，其中 go_package 是必需的设置，而且 go_package 的值必须是包导入的路径。
+option go_package = "github.com/nico612/go-project/examples/pkg/proto/miniblog/v1";
+
+// 定义一个MiniBlog RPC 服务
+service MiniBlog  {
+  rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
+}
+
+message UserInfo {
+  string username = 1;
+  string nickname = 2;
+  string email = 3;
+  string phone = 4;
+  int64 postCount = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+}
+
+// ListUserRequest 指定 `ListUser` 接口的请求参数
+// 在定义消息的时候，还可以使用 `singular`、`optional`、`repeated` 3 个关键字来修饰字段：
+//    `singular`：默认值，说明该字段可以出现 0 次或者 1 次（不能超过 1 次）；
+//    `optional`：指定字段为可选字段；
+//    `repeated`：指定字段可以重复任意次数（包括 0），可以看成是一个数组。
+// example:
+//  message ModifierExample {
+//    reserved 2, 15 to 25;
+//    string username = 1;
+//    optional string nickname = 3;
+//    bool hasEmail = 4;
+//    repeated string phones = 5;
+//    bytes content = 6;
+//    int32 money  = 7;
+//    int64 count = 8;
+//    map<string, int64> address = 9;
+//    google.protobuf.Timestamp createdAt = 10;
+//  }
+//编译后：
+//    type ModifierExample struct {
+//        state         protoimpl.MessageState
+//        sizeCache     protoimpl.SizeCache
+//        unknownFields protoimpl.UnknownFields
+//
+//        Username  string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+//        Nickname  *string                `protobuf:"bytes,3,opt,name=nickname,proto3,oneof" json:"nickname,omitempty"`
+//        HasEmail  bool                   `protobuf:"varint,4,opt,name=hasEmail,proto3" json:"hasEmail,omitempty"`
+//        Phones    []string               `protobuf:"bytes,5,rep,name=phones,proto3" json:"phones,omitempty"`
+//        Content   []byte                 `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+//        Money     int32                  `protobuf:"varint,7,opt,name=money,proto3" json:"money,omitempty"`
+//        Count     int64                  `protobuf:"varint,8,opt,name=count,proto3" json:"count,omitempty"`
+//        Address   map[string]int64       `protobuf:"bytes,9,rep,name=address,proto3" json:"address,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+//        CreatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+//    }
+
+message ListUserRequest {
+  optional int64 limit = 1;
+  optional int64 offset = 2;
+}
+
+message ListUserResponse {
+  int64 totalCount = 1;
+  repeated UserInfo Users = 2;
+}

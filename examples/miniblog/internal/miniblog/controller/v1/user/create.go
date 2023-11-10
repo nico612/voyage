@@ -3,13 +3,16 @@ package user
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/nico612/go-project/examples/miniblog/internal/pkg/auth"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/core"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
 	v1 "github.com/nico612/go-project/examples/miniblog/pkg/api/miniblog/v1"
-	"github.com/nico612/go-project/pkg/auth"
 )
 
-func (ctr *UserController) Create(c *gin.Context) {
+const defaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
+
+// Create 创建一个新的用户.
+func (ctrl *UserController) Create(c *gin.Context) {
 
 	var (
 		r   v1.CreateUserRequest
@@ -35,8 +38,14 @@ func (ctr *UserController) Create(c *gin.Context) {
 		return
 	}
 
-	if err := ctr.b.Users().Create(c, &r); err != nil {
+	if err = ctrl.b.Users().Create(c, &r); err != nil {
 		log.C(c).Errorw("create user", "error", err.Error())
+		core.WriteResponse(c, err, nil)
+		return
+	}
+
+	// 添加权限
+	if _, err = ctrl.a.AddNamedPolicy("p", r.Username, "/v1/users/"+r.Username, defaultMethods); err != nil {
 		core.WriteResponse(c, err, nil)
 		return
 	}
