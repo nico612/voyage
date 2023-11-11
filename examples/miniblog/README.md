@@ -148,3 +148,100 @@ $ mysqldump -h127.0.0.1 -uroot --databases miniblog -p'12345678' --add-drop-data
 
 ## grpc + grpc-gateway 
 [grpc-hello-world：可用的代码（亲测可用）](https://github.com/eddycjy/grpc-hello-world) + [教程（Grpc+Grpc Gateway实践二 有些复杂的Hello World）；](https://segmentfault.com/a/1190000013408485)
+
+
+## 接口性能测试
+https://juejin.cn/book/7176608782871429175/section/7179878428215083063
+
+### Wrk 工具安装
+```shell
+$ git clone https://github.com/wg/wrk
+$ cd wrk/
+$ make
+$ sudo cp ./wrk /usr/bin
+```
+
+### Wrk 使用方法
+
+Wrk 使用起来不复杂，执行 wrk --help 可以看到 wrk 的所有运行参数：
+
+```shell
+$ wrk --help
+Usage: wrk <options> <url>
+  Options:
+    -c, --connections <N>  Connections to keep open
+    -d, --duration    <T>  Duration of test
+    -t, --threads     <N>  Number of threads to use
+
+    -s, --script      <S>  Load Lua script file
+    -H, --header      <H>  Add header to request
+        --latency          Print latency statistics
+        --timeout     <T>  Socket/request timeout
+    -v, --version          Print version details
+
+  Numeric arguments may include a SI unit (1k, 1M, 1G)
+  Time arguments may include a time unit (2s, 2m, 2h)
+
+```
+常用的参数为：
+
+- -t: 线程数（线程数不要太多，是核数的 2 到 4 倍即可，多了反而会因为线程切换过多造成效率降低）；
+- -c: 并发数；
+- -d: 测试的持续时间，默认为 10s；
+- -T: 请求超时时间；
+- -H: 指定请求的 HTTP Header，有些 API 需要传入一些 Header，可通过 Wrk 的 -H 参数来传入；
+- --latency: 打印响应时间分布；
+- -s: 指定 Lua 脚本，Lua 脚本可以实现更复杂的请求。
+
+### Wrk 结果解析
+
+1. 启动 miniblog 服务。
+```shell
+make build -f miniblog.mk
+
+# 需要将日志输出定位到 /dev/null，打印到标准输出会严重影响接口性能
+examples/miniblog/bin/miniblog/miniblog -c examples/miniblog/configs/miniblog.yaml &>/dev/null 
+```
+
+2. 打开一个新的 Linux 终端执行 wrk 进行 API 接口压力测试，命令如下：.
+```shell
+$ wrk -t32 -c1000 -d30s -T30s --latency http://127.0.0.1:8080/healthz
+Running 30s test @ http://127.0.0.1:8080/healthz
+  32 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    12.49ms   12.47ms 180.14ms   88.44%
+    Req/Sec     2.89k   417.30    13.21k    88.66%
+  Latency Distribution
+     50%   13.14ms
+     75%   20.27ms
+     90%   26.40ms
+     99%   47.91ms
+  2766240 requests in 30.10s, 1.20GB read
+  Socket errors: connect 3, read 0, write 0, timeout 0
+Requests/sec:  91904.09
+Transfer/sec:     40.93MB
+```
+测试输出解读如下。
+
+32 threads and 1000 connections: 用 32 个线程模拟 1000 个连接，分别对应 -t 和 -c 参数。
+
+Thread Stats： 线程统计。
+
+Latency: 响应时间，有平均值、标准偏差、最大值、正负一个标准差占比；
+Req/Sec: 每个线程每秒完成的请求数， 同样有平均值、标准偏差、最大值、正负一个标准差占比。
+Latency Distribution: 响应时间分布。
+
+50%: 50% 的响应时间为：13.14ms；
+75%: 75% 的响应时间为：20.27ms；
+90%: 90% 的响应时间为：26.40ms；
+99%: 99% 的响应时间为：47.91ms。
+2766240 requests in 30.10s, 1.20GB read: 30s 完成的总请求数（2766240）和数据读取量（1.20GB）；
+
+Socket errors: connect 3, read 0, write 0, timeout 0: 错误统计；
+
+Requests/sec: QPS；
+
+Transfer/sec: TPS。
+
+
+

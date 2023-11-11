@@ -44,5 +44,6 @@ func BenchmarkGenShortIDTimeConsuming(b *testing.B) {
 }
 
 // 查看性能并生成函数调用图 `go test -bench= . -cpuprofile=cpu.profile`
+// 指定测试函数：`go -test -bench=BenchmarkGenShortID -benchmem -cpuprofile cpu.profile -memprofile mem.profile `
 // 上述命令会在当前目录下生成 cpu.profile 和 id.test 文件。
 // 之后，我们可以执行 go tool pprof id.test cpu.profile 查看性能（进入交互界面后执行 top 指令）：
