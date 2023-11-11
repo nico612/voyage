@@ -6,6 +6,8 @@ import (
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 )
 
+//go:generate mockgen -destination mock_biz.go -package biz github.com/nico612/go-project/examples/miniblog/internal/miniblog/biz IBiz
+
 type IBiz interface {
 	Users() user.UserBiz
 	Posts() post.PostBiz

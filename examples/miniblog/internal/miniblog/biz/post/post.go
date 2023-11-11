@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockgen -destination mock_post.go -package post github.com/nico612/go-project/examples/miniblog/internal/miniblog/biz/post PostBiz
 type PostBiz interface {
 	Create(ctx context.Context, username string, r *v1.CreatePostRequest) (*v1.CreatePostResponse, error)
 	Update(ctx context.Context, username, postID string, r *v1.UpdatePostRequest) error

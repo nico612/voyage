@@ -1,5 +1,7 @@
 package store
 
+//go:generate mockgen -destination store_mock.go -package store github.com/nico612/go-project/examples/miniblog/internal/miniblog/store IStore,UserStore,PostStore
+
 import (
 	"gorm.io/gorm"
 	"sync"

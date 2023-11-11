@@ -10,6 +10,9 @@ ifeq ($(origin VERSION), undefined)
 VERSION := $(shell git describe --tags --always --match='v*')
 endif
 
+# 获取项目根目录绝对路径。
+ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/ && pwd -P))
+
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
 	#to see https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/find.
@@ -35,7 +38,7 @@ init:
 # generate
 generate:
 	go mod tidy
-	go generate ./...
+	go generate $(ROOT_DIR)/...
 
 .PHONY: clean
 clean:

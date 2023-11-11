@@ -85,7 +85,7 @@ run: build
 .PHONY: generate
 # generate
 generate: tidy
-	go generate ./...
+	go generate $(ROOT_DIR)/...
 
 .PHONY: clean # 实现幂等删除。
 clean:

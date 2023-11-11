@@ -19,6 +19,8 @@ import (
 
 // UserBiz 的创建思路和 UserStore 保持一致。在 Create 方法中，实现了具体的创建逻辑：
 // 接受来自 Controller 层的入参：context.Context、*v1.CreateUserRequest；
+//
+//go:generate mockgen -destination mock_user.go -package user github.com/nico612/go-project/examples/miniblog/internal/miniblog/biz/user UserBiz
 type UserBiz interface {
 	Create(ctx context.Context, r *v1.CreateUserRequest) error
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
@@ -64,7 +66,7 @@ func (u *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginRespo
 
 	// 对比传入的明文密码和数据库中已加密过的密码是否匹配
 	if err = auth.Compare(user.Password, r.Password); err != nil {
-		return nil, err
+		return nil, errno.ErrPasswordIncorrect
 	}
 
 	// 如果匹配成功，说明登录成功，签发 token 并返回
@@ -129,7 +131,7 @@ func (u *userBiz) List(ctx context.Context, offset, limit int) (*v1.ListUserResp
 			case <-ctx.Done():
 				return nil
 			default:
-				count, err := u.ds.Posts().Count(ctx, user.Username)
+				postCount, err := u.ds.Posts().Count(ctx, user.Username)
 				if err != nil {
 					log.C(ctx).Errorw("Failed to list posts", "err", err)
 					return err
@@ -139,7 +141,7 @@ func (u *userBiz) List(ctx context.Context, offset, limit int) (*v1.ListUserResp
 					Nickname:  user.Nickname,
 					Email:     user.Email,
 					Phone:     user.Phone,
-					PostCount: count,
+					PostCount: postCount,
 					CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
 					UpdatedAt: user.UpdatedAt.Format("2006-01-02 15:04:05"),
 				})
@@ -176,7 +178,7 @@ func (b *userBiz) ListWithBadPerformance(ctx context.Context, offset, limit int)
 	for _, item := range list {
 		user := item
 
-		count, err := b.ds.Posts().Count(ctx, user.Username)
+		postCount, err := b.ds.Posts().Count(ctx, user.Username)
 		if err != nil {
 			log.C(ctx).Errorw("Failed to list posts", "err", err)
 			return nil, err
@@ -187,7 +189,7 @@ func (b *userBiz) ListWithBadPerformance(ctx context.Context, offset, limit int)
 			Nickname:  user.Nickname,
 			Email:     user.Email,
 			Phone:     user.Email,
-			PostCount: count,
+			PostCount: postCount,
 			CreatedAt: user.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: user.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
@@ -211,7 +213,7 @@ func (u *userBiz) Update(ctx context.Context, username string, r *v1.UpdateUserR
 		user.Nickname = *r.Nickname
 	}
 	if r.Email != nil {
-		user.Email = *r.Nickname
+		user.Email = *r.Email
 	}
 
 	if r.Phone != nil {
