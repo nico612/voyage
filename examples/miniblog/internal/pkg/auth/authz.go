@@ -1,17 +1,23 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package auth
 
 import (
+	"time"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
-	"time"
 )
 
 // 基于权限控制列表 ACL
 
 const (
-	// casbin 访问控制模型
+	// casbin 访问控制模型.
 	aclModel = `[request_definition]
 r =  sub, obj, act
 
@@ -26,7 +32,7 @@ m = r.sub == p.sub && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)
 `
 )
 
-// Authz 定义了一个授权器，提供授权功能
+// Authz 定义了一个授权器，提供授权功能.
 type Authz struct {
 	*casbin.SyncedEnforcer
 }
@@ -46,7 +52,7 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	// Initialize the enforcer.
 	enforcer, err := casbin.NewSyncedEnforcer(m, adapter)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	// Load the policy form DB

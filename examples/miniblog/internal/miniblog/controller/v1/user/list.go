@@ -1,7 +1,14 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package user
 
 import (
 	"context"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/core"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/errno"
@@ -9,7 +16,6 @@ import (
 	v1 "github.com/nico612/go-project/examples/miniblog/pkg/api/miniblog/v1"
 	pb "github.com/nico612/go-project/examples/miniblog/pkg/proto/miniblog/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"time"
 )
 
 // List 返回用户列表，只有 root 用户才能获取用户列表.
@@ -34,7 +40,7 @@ func (ctrl *UserController) List(c *gin.Context) {
 }
 
 // ListUser 返回用户列表，只有 root 用户才能获取用户列表.
-// pb.MiniBlogServer grpc服务实现
+// pb.MiniBlogServer grpc服务实现.
 func (ctrl *UserController) ListUser(ctx context.Context, r *pb.ListUserRequest) (*pb.ListUserResponse, error) {
 	log.C(ctx).Infow("ListUser function called")
 

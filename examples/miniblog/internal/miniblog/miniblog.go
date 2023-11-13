@@ -1,10 +1,26 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package miniblog
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/controller/v1/user"
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/known"
@@ -13,15 +29,6 @@ import (
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/token"
 	pb "github.com/nico612/go-project/examples/miniblog/pkg/proto/miniblog/v1"
 	"github.com/nico612/go-project/pkg/version/verflag"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"google.golang.org/grpc"
-	"net"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 var cfgFile string
@@ -39,7 +46,6 @@ func NewMiniBlogCommand() *cobra.Command {
 		SilenceUsage: true,
 		// 指定调用 cmd.Execute() 时，执行的 Run 函数，函数执行失败会返回错误信息
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			// 如果 `--version=true`, 则打印版本并退出
 			verflag.PrintAndExitIfRequested()
 
@@ -78,9 +84,8 @@ func NewMiniBlogCommand() *cobra.Command {
 	return cmd
 }
 
-// run 函数实际的业务代码入口函数
+// run 函数实际的业务代码入口函数.
 func run() error {
-
 	// 初始化 store 层
 	if err := initStore(); err != nil {
 		return err

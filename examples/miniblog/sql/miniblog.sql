@@ -1,3 +1,8 @@
+-- Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+-- Use of this source code is governed by a MIT style
+-- license that can be found in the LICENSE file. The original repo for
+-- this file is https://github.com/marmotedu/miniblog.
+
 
 # 创建脚本，创建完成后最好使用`mysqldump`工具导出数据和表的创建SQL语句
 DROP DATABASE IF EXISTS `miniblog`;

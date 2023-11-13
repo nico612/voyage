@@ -1,10 +1,16 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package store
 
 //go:generate mockgen -destination store_mock.go -package store github.com/nico612/go-project/examples/miniblog/internal/miniblog/store IStore,UserStore,PostStore
 
 import (
-	"gorm.io/gorm"
 	"sync"
+
+	"gorm.io/gorm"
 )
 
 // IStore 定义了 Store 层需要实现的方法.

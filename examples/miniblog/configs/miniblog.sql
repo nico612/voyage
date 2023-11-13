@@ -1,3 +1,8 @@
+-- Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+-- Use of this source code is governed by a MIT style
+-- license that can be found in the LICENSE file. The original repo for
+-- this file is https://github.com/marmotedu/miniblog.
+
 -- MySQL dump 10.13  Distrib 8.0.33, for macos13.4 (arm64)
 --
 -- Host: 127.0.0.1    Database: miniblog

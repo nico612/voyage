@@ -1,3 +1,8 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package user
 
 import (
@@ -17,6 +22,6 @@ type UserController struct {
 
 // New 创建一个 user controller.
 func New(ds store.IStore, a *auth.Authz) *UserController {
-	//Controller 依赖 Biz，Biz 依赖 Store，所以我们传入了 IStore 类型的参数 ds 用来创建 UserController。
+	// Controller 依赖 Biz，Biz 依赖 Store，所以我们传入了 IStore 类型的参数 ds 用来创建 UserController。
 	return &UserController{b: biz.NewBiz(ds), a: a}
 }

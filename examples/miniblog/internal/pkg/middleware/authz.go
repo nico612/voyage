@@ -1,3 +1,8 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package middleware
 
 import (
@@ -13,11 +18,10 @@ type Auther interface {
 	Authorize(sub, obj, act string) (bool, error)
 }
 
-// Authz 权限控制列表（ACL，Access Control List）；中间件
+// Authz 权限控制列表（ACL，Access Control List）；中间件.
 func Authz(a Auther) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		//从 *gin.Context 中解析出了：用户名、访问路径、HTTP 方法，分别作为 casbin 授权模型中的 sub、obj、act。
+		// 从 *gin.Context 中解析出了：用户名、访问路径、HTTP 方法，分别作为 casbin 授权模型中的 sub、obj、act。
 		sub := c.GetString(known.XUsernameKey)
 		obj := c.Request.URL.Path
 		act := c.Request.Method

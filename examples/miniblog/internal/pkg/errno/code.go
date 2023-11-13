@@ -1,3 +1,8 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package errno
 
 var (
@@ -22,6 +27,6 @@ var (
 	// ErrTokenInvalid 表示 JWT Token 格式错误.
 	ErrTokenInvalid = &Errno{HTTP: 401, Code: "AuthFailure.TokenInvalid", Message: "Token was invalid."}
 
-	// ErrUnauthorized 无权限
+	// ErrUnauthorized 无权限.
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}
 )

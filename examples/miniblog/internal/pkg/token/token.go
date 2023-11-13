@@ -1,12 +1,18 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package token
 
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 // Config 包括 token 包的配置选项.
@@ -22,9 +28,9 @@ type Config struct {
 var ErrMissingHeader = errors.New("the length of the `Authorization` header is zero")
 
 var (
-	// 包级别 config
+	// 包级别 config.
 	config = Config{"Rtg8BPKNEf2mB4mgvKONGPZZQSaJWNLijxR42qRgq0iBb5", "identityKey"}
-	// 防止同一个服务进程多次初始化，需要使用 sync.Once 来确保 token 包只被初始化一次
+	// 防止同一个服务进程多次初始化，需要使用 sync.Once 来确保 token 包只被初始化一次.
 	once sync.Once
 )
 
@@ -50,7 +56,6 @@ func Parse(tokenString string, key string) (string, error) {
 		}
 		return []byte(key), nil
 	})
-
 	if err != nil {
 		return "", err
 	}

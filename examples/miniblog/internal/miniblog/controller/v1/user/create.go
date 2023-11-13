@@ -1,3 +1,8 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package user
 
 import (
@@ -13,7 +18,6 @@ const defaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
 
 // Create 创建一个新的用户.
 func (ctrl *UserController) Create(c *gin.Context) {
-
 	var (
 		r   v1.CreateUserRequest
 		err error

@@ -1,8 +1,14 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package store
 
 import (
 	"context"
 	"errors"
+
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/model"
 	"gorm.io/gorm"
 )
@@ -16,7 +22,7 @@ type UserStore interface {
 	List(ctx context.Context, offset, limit int) (count int64, ret []*model.UserM, err error)
 }
 
-// UserStore接口实现
+// UserStore接口实现.
 type users struct {
 	db *gorm.DB
 }

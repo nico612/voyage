@@ -1,3 +1,8 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package user
 
 import (
@@ -10,7 +15,6 @@ import (
 
 // ChangePassword 用来修改指定用户的密码.
 func (ctrl *UserController) ChangePassword(c *gin.Context) {
-
 	var r v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&r); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)

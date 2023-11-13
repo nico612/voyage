@@ -1,8 +1,14 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package post
 
 import (
 	"context"
 	"errors"
+
 	"github.com/jinzhu/copier"
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/errno"
@@ -106,7 +112,6 @@ func (p *postBiz) List(ctx context.Context, username string, offset, limit int) 
 
 	posts := make([]*v1.PostInfo, 0, len(list))
 	for _, item := range list {
-
 		posts = append(posts, &v1.PostInfo{
 			Username:  item.Username,
 			PostID:    item.PostID,

@@ -1,8 +1,16 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package user
 
 import (
 	"context"
 	"errors"
+	"regexp"
+	"sync"
+
 	"github.com/jinzhu/copier"
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/auth"
@@ -13,8 +21,6 @@ import (
 	v1 "github.com/nico612/go-project/examples/miniblog/pkg/api/miniblog/v1"
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
-	"regexp"
-	"sync"
 )
 
 // UserBiz 的创建思路和 UserStore 保持一致。在 Create 方法中，实现了具体的创建逻辑：
@@ -31,7 +37,7 @@ type UserBiz interface {
 	Delete(ctx context.Context, username string) error
 }
 
-// UserBiz 接口的具体实现
+// UserBiz 接口的具体实现.
 type userBiz struct {
 	ds store.IStore
 }
@@ -57,7 +63,6 @@ func (u *userBiz) Create(ctx context.Context, r *v1.CreateUserRequest) error {
 }
 
 func (u *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
-
 	// 获取登录用户的所有信息
 	user, err := u.ds.Users().Get(ctx, r.Username)
 	if err != nil {

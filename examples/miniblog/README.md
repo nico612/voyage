@@ -7,17 +7,17 @@
 
 ### 初始化
 ```shell
-make init -f miniblog.mk
+make init -f Makefile
 ```
 ### build
 
 ```shell
-make build -f miniblog.mk
+make build -f Makefile
 ```
 
 ### 运行
 ```shell
-make run -f miniblog.mk
+make run -f Makefile
 ```
 
 ### 打印版本号
@@ -197,7 +197,7 @@ Usage: wrk <options> <url>
 
 1. 启动 miniblog 服务。
 ```shell
-make build -f miniblog.mk
+make build -f Makefile
 
 # 需要将日志输出定位到 /dev/null，打印到标准输出会严重影响接口性能
 examples/miniblog/bin/miniblog/miniblog -c examples/miniblog/configs/miniblog.yaml &>/dev/null 

@@ -1,8 +1,13 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package log
 
 import "go.uber.org/zap/zapcore"
 
-// Options 包含与日志相关的配置项
+// Options 包含与日志相关的配置项.
 type Options struct {
 	// 是否开启 caller，如果开启会在日志中显示调用日志所在的文件和行号
 	DisableCaller bool

@@ -1,14 +1,20 @@
+// Copyright 2023 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file. The original repo for
+// this file is https://github.com/marmotedu/miniblog.
+
 package miniblog
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/nico612/go-project/examples/miniblog/internal/miniblog/store"
 	"github.com/nico612/go-project/examples/miniblog/internal/pkg/log"
 	"github.com/nico612/go-project/pkg/db"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 const (
@@ -60,7 +66,6 @@ func initConfig() {
 
 	// 打印 viper 当前使用的配置文件，方便 Debug.
 	log.Infow("Using config file", "file", viper.ConfigFileUsed())
-
 }
 
 // logOptions 从 viper 中读取日志配置，构建 `*log.Options` 并返回.
@@ -75,7 +80,7 @@ func logOptions() *log.Options {
 	}
 }
 
-// initStore 读取 db 配置，创建 gorm.DB 实例，并初始化miniblog store层
+// initStore 读取 db 配置，创建 gorm.DB 实例，并初始化miniblog store层.
 func initStore() error {
 	dbOptions := &db.MySQLOptions{
 		Host:                  viper.GetString("mysql.host"),
