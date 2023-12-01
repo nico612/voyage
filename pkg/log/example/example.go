@@ -7,7 +7,7 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/pkg/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

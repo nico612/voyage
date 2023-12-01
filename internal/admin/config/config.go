@@ -2,11 +2,11 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/nico612/go-project/pkg/utils/iduitl"
+	"github.com/nico612/voyage/pkg/utils/iduitl"
 
-	"github.com/nico612/go-project/internal/pkg/options"
-	cliflag "github.com/nico612/go-project/pkg/cli/flag"
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/internal/pkg/options"
+	cliflag "github.com/nico612/voyage/pkg/cli/flag"
+	"github.com/nico612/voyage/pkg/log"
 )
 
 type Config struct {

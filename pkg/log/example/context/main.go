@@ -8,7 +8,7 @@ import (
 	"context"
 	"flag"
 
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/pkg/log"
 )
 
 var (

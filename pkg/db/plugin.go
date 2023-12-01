@@ -6,7 +6,7 @@
 package db
 
 import (
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/pkg/log"
 	"time"
 
 	"gorm.io/gorm"

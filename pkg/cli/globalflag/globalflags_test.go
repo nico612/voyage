@@ -6,7 +6,7 @@ package globalflag
 
 import (
 	"flag"
-	cliflag "github.com/nico612/go-project/pkg/cli/flag"
+	cliflag "github.com/nico612/voyage/pkg/cli/flag"
 	"reflect"
 	"sort"
 	"strings"

@@ -4,7 +4,7 @@
 
 package main
 
-import "github.com/nico612/go-project/pkg/log"
+import "github.com/nico612/voyage/pkg/log"
 
 func main() {
 	log.Infof("this is a test log, message: %s", "good")

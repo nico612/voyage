@@ -2,8 +2,8 @@ package iduitl
 
 import (
 	"crypto/rand"
-	"github.com/nico612/go-project/pkg/utils/iputil"
-	"github.com/nico612/go-project/pkg/utils/stringutil"
+	"github.com/nico612/voyage/pkg/utils/iputil"
+	"github.com/nico612/voyage/pkg/utils/stringutil"
 	"github.com/sony/sonyflake"
 	"github.com/speps/go-hashids"
 )

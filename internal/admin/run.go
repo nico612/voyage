@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"github.com/nico612/go-project/internal/admin/config"
-	"github.com/nico612/go-project/internal/admin/service"
+	"github.com/nico612/voyage/internal/admin/config"
+	"github.com/nico612/voyage/internal/admin/service"
 )
 
 // Run 运行指定的APIServer。 这永远不应该退出。

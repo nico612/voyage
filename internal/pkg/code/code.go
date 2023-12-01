@@ -1,7 +1,7 @@
 package code
 
 import (
-	"github.com/nico612/go-project/pkg/errors"
+	"github.com/nico612/voyage/pkg/errors"
 	"github.com/novalagung/gubrak"
 	"net/http"
 )

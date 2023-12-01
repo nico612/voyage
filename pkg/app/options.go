@@ -1,7 +1,7 @@
 package app
 
 import (
-	cliflag "github.com/nico612/go-project/pkg/cli/flag"
+	cliflag "github.com/nico612/voyage/pkg/cli/flag"
 )
 
 type CliOptions interface {

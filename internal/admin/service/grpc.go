@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/pkg/log"
 	"google.golang.org/grpc"
 	"net"
 )

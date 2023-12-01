@@ -3,7 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/gosuri/uitable"
-	"github.com/nico612/go-project/pkg/utils/homedir"
+	"github.com/nico612/voyage/pkg/utils/homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"

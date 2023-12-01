@@ -1,7 +1,7 @@
 package options
 
 import (
-	"github.com/nico612/go-project/pkg/db"
+	"github.com/nico612/voyage/pkg/db"
 	"gorm.io/gorm"
 	"time"
 )

@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/nico612/go-project/internal/admin/config"
-	"github.com/nico612/go-project/pkg/app"
-	"github.com/nico612/go-project/pkg/log"
+	"github.com/nico612/voyage/internal/admin/config"
+	"github.com/nico612/voyage/pkg/app"
+	"github.com/nico612/voyage/pkg/log"
 )
 
 const commandDesc = `The admin server validates and configures data for the api objects`

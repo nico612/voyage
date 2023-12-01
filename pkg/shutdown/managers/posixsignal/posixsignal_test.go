@@ -1,7 +1,7 @@
 package posixsignal
 
 import (
-	"github.com/nico612/go-project/pkg/shutdown"
+	"github.com/nico612/voyage/pkg/shutdown"
 	"syscall"
 	"testing"
 	"time"

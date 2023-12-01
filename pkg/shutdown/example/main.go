@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/nico612/go-project/pkg/shutdown"
-	"github.com/nico612/go-project/pkg/shutdown/managers/posixsignal"
+	"github.com/nico612/voyage/pkg/shutdown"
+	"github.com/nico612/voyage/pkg/shutdown/managers/posixsignal"
 	"time"
 )
 

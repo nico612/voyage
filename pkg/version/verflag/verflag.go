@@ -8,7 +8,7 @@ package verflag
 
 import (
 	"fmt"
-	"github.com/nico612/go-project/pkg/version"
+	"github.com/nico612/voyage/pkg/version"
 	"os"
 	"strconv"
 

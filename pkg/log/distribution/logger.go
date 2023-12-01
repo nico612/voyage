@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 
-	logruslogger "github.com/nico612/go-project/pkg/log/logrus"
+	logruslogger "github.com/nico612/voyage/pkg/log/logrus"
 )
 
 // Logger is a logger which compatible to logrus/std log/prometheus.
