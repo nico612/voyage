@@ -1,0 +1,151 @@
+
+# system configuration
+server:
+  mode: debug  # server mode: release, debug, test，默认 release
+  healthz: true # 是否开启健康检查，如果开启会安装 /healthz 路由，默认 true
+  max-ping-count: 3 # http 服务启动后，自检尝试次数，默认 3
+  oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
+  use-multipoint: false
+  # IP限制次数 一个小时15000次
+  iplimit-count: 15000
+  #  IP限制一个小时
+  iplimit-time: 3600
+
+# GRPC 服务配置
+grpc:
+  bind-address: 0.0.0.0 # grpc 安全模式的 IP 地址，默认 0.0.0.0
+  bind-port: 9001 # grpc 安全模式端口号，默认 9001
+  
+gateway:
+  bind-address: 0.0.0.0
+  bind-port: 9090
+
+
+# JWT 配置
+jwt:
+  realm: JWT # jwt 标识
+  key: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
+  timeout: 24h # token 过期时间(小时)
+  max-refresh: 24h # token 更新时间(小时)
+
+# zap logger configuration
+zap:
+  level: info
+  format: console
+  prefix:
+  director: log
+  show-line: true
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
+
+# Redis 配置
+redis:
+  host: 127.0.0.1 # redis 地址，默认 127.0.0.1:6379
+  port: 6379 # redis 端口，默认 6379
+  password:  # redis 密码
+  #addrs:
+  #master-name: # redis 集群 master 名称
+  #username: # redis 登录用户名
+  #database: # redis 数据库
+  #optimisation-max-idle:  # redis 连接池中的最大空闲连接数
+  #optimisation-max-active: # 最大活跃连接数
+  #timeout: # 连接 redis 时的超时时间
+  #enable-cluster: # 是否开启集群模式
+  #use-ssl: # 是否启用 TLS
+  #ssl-insecure-skip-verify: # 当连接 redis 时允许使用自签名证书
+
+# mysql connect configuration
+# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
+mysql:
+  host: 127.0.0.1:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
+  username: root # MySQL 用户名(建议授权最小权限集)
+  password: 12345678 # MySQL 用户密码
+  database: go-project # voyage 系统所用的数据库名
+  max-idle-connections: 100 # MySQL 最大空闲连接数，默认 100
+  max-open-connections: 100 # MySQL 最大打开的连接数，默认 100
+  max-connection-life-time: 10s # 空闲连接最大存活时间，默认 10s
+  log-level: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
+
+
+# email configuration
+email:
+  to: xxx@qq.com
+  port: 465
+  from: xxx@163.com
+  host: smtp.163.com
+  is-ssl: true
+  secret: xxx
+  nickname: test
+
+# captcha configuration
+captcha:
+  key-long: 6
+  img-width: 240
+  img-height: 80
+  open-captcha: 0 # 0代表一直开启，大于0代表限制次数
+  open-captcha-timeout: 3600 # open-captcha大于0时才生效
+
+# local configuration
+local:
+  path: uploads/file
+  store-path: uploads/file
+
+
+# qiniu configuration (请自行七牛申请对应的 公钥 私钥 bucket 和 域名地址)
+qiniu:
+  zone: ZoneHuaDong
+  bucket: ""
+  img-path: ""
+  use-https: false
+  access-key: ""
+  secret-key: ""
+  use-cdn-domains: false
+
+# aliyun oss configuration
+aliyun-oss:
+  endpoint: yourEndpoint
+  access-key-id: yourAccessKeyId
+  access-key-secret: yourAccessKeySecret
+  bucket-name: yourBucketName
+  bucket-url: yourBucketUrl
+  base-path: yourBasePath
+
+# aws s3 configuration (minio compatible)
+aws-s3:
+  bucket: xxxxx-10005608
+  region: ap-shanghai
+  endpoint: ""
+  s3-force-path-style: false
+  disable-ssl: false
+  secret-id: your-secret-id
+  secret-key: your-secret-key
+  base-url: https://gin.vue.admin
+  path-prefix: github.com/flipped-aurora/gin-vue-admin/server
+
+# excel configuration
+excel:
+  dir: ./resource/excel/
+
+
+# 跨域配置
+# 需要配合 server/initialize/router.go -> `Router.Use(middleware.CorsByRules())` 使用
+cors:
+  mode: strict-whitelist # 放行模式: allow-all, 放行全部; whitelist, 白名单模式, 来自白名单内域名的请求添加 cors 头; strict-whitelist 严格白名单模式, 白名单外的请求一律拒绝
+  whitelist:
+    - allow-origin: example1.com
+      allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+      allow-methods: POST, GET
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+
+      allow-credentials: true # 布尔值
+    - allow-origin: example2.com
+      allow-headers: content-type
+      allow-methods: GET, POST
+      expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type
+      allow-credentials: true # 布尔值
+
+# added by mohamed hassan to support multi language
+language:
+  language: en
+  dir: ./resource/lang/
