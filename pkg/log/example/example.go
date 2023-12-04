@@ -35,11 +35,11 @@ func main() {
 	// logger配置
 	opts := &log.Options{
 		Level:            "debug",
-		Format:           "console",
+		Format:           "json",
 		EnableColor:      true, // if you need output to local path, with EnableColor must be false.
 		DisableCaller:    true,
-		OutputPaths:      []string{"test.log", "stdout"},
-		ErrorOutputPaths: []string{"error.log"},
+		OutputPaths:      []string{"_output/log/test.log", "stdout"},
+		ErrorOutputPaths: []string{"_output/log/errors.log"},
 	}
 	// 初始化全局logger
 	log.Init(opts)

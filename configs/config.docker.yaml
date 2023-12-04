@@ -1,6 +1,6 @@
 
 
-# system configuration
+# adminsrv configuration
 server:
   env: develop # Change to "develop" to skip authentication for development mode
   addr: 8888
@@ -53,11 +53,11 @@ mysql:
   host: 127.0.0.1:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
   username: root # MySQL 用户名(建议授权最小权限集)
   password: 12345678 # MySQL 用户密码
-  database: go-project # voyage 系统所用的数据库名
+  database: go-project # adminsrv 系统所用的数据库名
   max-idle-connections: 100 # MySQL 最大空闲连接数，默认 100
   max-open-connections: 100 # MySQL 最大打开的连接数，默认 100
   max-connection-life-time: 10s # 空闲连接最大存活时间，默认 10s
-  log-level: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
+  log-level: 4 # GORM log level, 1: silent, 2:errors, 3:warn, 4:info
 
 
 # email configuration
@@ -113,7 +113,7 @@ aws-s3:
   secret-id: your-secret-id
   secret-key: your-secret-key
   base-url: https://gin.vue.admin
-  path-prefix: github.com/flipped-aurora/gin-vue-admin/server
+  path-prefix: github.com/flipped-aurora/gin-vue-adminsrv-adminsrv-server/server
 
 # excel configuration
 excel:

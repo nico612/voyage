@@ -16,7 +16,7 @@ const (
 	flagFormat            = "log.format"
 	flagEnableColor       = "log.enable-color"
 	flagOutputPaths       = "log.output-paths"
-	flagErrorOutputPaths  = "log.error-output-paths"
+	flagErrorOutputPaths  = "log.errors-output-paths"
 	flagDevelopment       = "log.development"
 	flagName              = "log.name"
 
@@ -29,8 +29,8 @@ type Options struct {
 	// 支持输出到多个输出，逗号分开。支持输出到标准输出（stdout）和文件。
 	OutputPaths []string `json:"output-paths"       mapstructure:"output-paths"`
 	// zap内部(非业务)错误日志输出路径，多个输出，逗号分开
-	ErrorOutputPaths []string `json:"error-output-paths" mapstructure:"error-output-paths"`
-	// 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。
+	ErrorOutputPaths []string `json:"errors-output-paths" mapstructure:"errors-output-paths"`
+	// 日志级别，优先级从低到高依次为：debug, info, warn, errors, dpanic, panic, fatal。
 	Level string `json:"level"              mapstructure:"level"`
 	// 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。
 	Format string `json:"format"             mapstructure:"format"`

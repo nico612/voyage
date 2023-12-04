@@ -38,7 +38,7 @@ func main() {
 		EnableColor:      true,
 		DisableCaller:    true,
 		OutputPaths:      []string{"test.log", "stdout"},
-		ErrorOutputPaths: []string{"error.log"},
+		ErrorOutputPaths: []string{"errors.log"},
 	}
 	// 初始化全局logger
 	log.Init(opts)

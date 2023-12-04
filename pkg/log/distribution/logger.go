@@ -161,7 +161,7 @@ func (l *Logger) Panicf(format string, args ...interface{}) {
 	l.logger.Panic(fmt.Sprintf(format, args...))
 }
 
-// WithError return a logger with an error field.
+// WithError return a logger with an errors field.
 func (l *Logger) WithError(err error) *logrus.Entry {
 	return logrus.NewEntry(l.logrusLogger).WithError(err)
 }

@@ -1,28 +1,51 @@
+// Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package code
 
 import (
 	"github.com/nico612/voyage/pkg/errors"
-	"github.com/novalagung/gubrak"
 	"net/http"
+
+	"github.com/novalagung/gubrak"
 )
 
+// ErrCode implements `github.com/marmotedu/errors`.Coder interface.
 type ErrCode struct {
+	// C refers to the code of the ErrCode.
+	C int
 
-	// 错误码
-	Code int
-
-	// 状态码
+	// HTTP status that should be used for the associated error code.
 	HTTP int
 
-	// 错误消息
-	Msg string
+	// External (user) facing error text.
+	Ext string
 
-	// 指定参考文档
+	// Ref specify the reference document.
 	Ref string
 }
 
 var _ errors.Coder = &ErrCode{}
 
+// Code returns the integer code of ErrCode.
+func (coder ErrCode) Code() int {
+	return coder.C
+}
+
+// String implements stringer. String returns the external error message,
+// if any.
+func (coder ErrCode) String() string {
+	return coder.Ext
+}
+
+// Reference returns the reference document.
+func (coder ErrCode) Reference() string {
+	return coder.Ref
+}
+
+// HTTPStatus returns the associated HTTP status code, if any. Otherwise,
+// returns 200.
 func (coder ErrCode) HTTPStatus() int {
 	if coder.HTTP == 0 {
 		return http.StatusInternalServerError
@@ -31,22 +54,8 @@ func (coder ErrCode) HTTPStatus() int {
 	return coder.HTTP
 }
 
-func (coder ErrCode) String() string {
-	return coder.Msg
-}
-
-func (coder ErrCode) Reference() string {
-	return coder.Ref
-}
-
-func (coder ErrCode) ErrCode() int {
-	return coder.Code
-}
-
 // nolint: unparam
 func register(code int, httpStatus int, message string, refs ...string) {
-
-	// 根据项目需要自定义需要包含的 HTTP status
 	found, _ := gubrak.Includes([]int{200, 400, 401, 403, 404, 500}, httpStatus)
 	if !found {
 		panic("http code not in `200, 400, 401, 403, 404, 500`")
@@ -58,12 +67,11 @@ func register(code int, httpStatus int, message string, refs ...string) {
 	}
 
 	coder := &ErrCode{
-		Code: code,
+		C:    code,
 		HTTP: httpStatus,
-		Msg:  message,
+		Ext:  message,
 		Ref:  reference,
 	}
 
-	// 注册定义的错误码，如果错误码已存在会 panic
 	errors.MustRegister(coder)
 }

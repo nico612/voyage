@@ -1,4 +1,4 @@
-package iduitl
+package idutil
 
 import (
 	"crypto/rand"

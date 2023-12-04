@@ -10,24 +10,41 @@ COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 ifeq ($(origin ROOT_DIR),undefined)
 ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/../.. && pwd -P))
 endif
+
 ifeq ($(origin OUTPUT_DIR),undefined)
 OUTPUT_DIR := $(ROOT_DIR)/_output
 $(shell mkdir -p $(OUTPUT_DIR))
 endif
+
 ifeq ($(origin TOOLS_DIR),undefined)
 TOOLS_DIR := $(OUTPUT_DIR)/tools
 $(shell mkdir -p $(TOOLS_DIR))
 endif
+
 ifeq ($(origin TMP_DIR),undefined)
 TMP_DIR := $(OUTPUT_DIR)/tmp
 $(shell mkdir -p $(TMP_DIR))
 endif
+
+# proto 存放路径
+ifeq ($(origin PROTO_DIR), undefined)
+PROTO_DIR := $(ROOT_DIR)/api/voyage
+$(shell mkdir -p $(PROTO_DIR))
+endif
+
+# proto 的 go 文件 输出路径
+ifeq ($(origin PROTO_GO_OUT_DIR), undefined)
+PROTO_GO_OUT_DIR := $(ROOT_DIR)/api/gen/voyage
+$(shell mkdir -p $(PROTO_GO_OUT_DIR))
+endif
+
 
 # set the version number. you should not need to do this
 # for the majority of scenarios.
 ifeq ($(origin VERSION), undefined)
 VERSION := $(shell git describe --tags --always --match='v*')
 endif
+
 # Check if the tree is dirty.  default to dirty
 GIT_TREE_STATE:="dirty"
 ifeq (, $(shell git status --porcelain 2>/dev/null))
@@ -76,7 +93,8 @@ COPY_GITHOOK:=$(shell cp -f githooks/* .git/hooks/)
 
 # Specify components which need certificate
 ifeq ($(origin CERTIFICATES),undefined)
-CERTIFICATES=voyage-apiserver voyage-authz-server admin
+# CERTIFICATES=adminsrv-adminsrv-server adminsrv-authz-server adminsrv
+CERTIFICATES=voyage-admin-server
 endif
 
 # Specify tools severity, include: BLOCKER_TOOLS, CRITICAL_TOOLS, TRIVIAL_TOOLS.

@@ -52,7 +52,9 @@ func New(opts *Options) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	if opts.Engine == "" {
+		opts.Engine = "InnoDB"
+	}
 	// 设置表引擎值
 	db.InstanceSet("gorm:table_options", "ENGINE="+opts.Engine)
 

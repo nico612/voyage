@@ -16,11 +16,20 @@ init:
 
 
 
-## gen: Generate all necessary files, such as error code files.
+## gen: Generate all necessary files, such as errors code files.
 .PHONY: gen
 gen:
 	@$(MAKE) gen.run
 
+.PHONY: protoc
+protoc:
+	@$(MAKE) gen.protoc
+
+
+## ca: Generate CA files for all adminsrv components.
+.PHONY: ca
+ca:
+	@$(MAKE) gen.ca
 
 
 # show help

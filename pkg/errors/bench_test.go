@@ -28,7 +28,7 @@ func pkgErrors(at, depth int) error {
 
 func marmotErrors(at, depth int) error {
 	if at >= depth {
-		return WithCode(unknownCoder.ErrCode(), "ye error")
+		return WithCode(unknownCoder.Code(), "ye error")
 	}
 	return marmotErrors(at+1, depth)
 }

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/fatih/color"
-	flag2 "github.com/nico612/voyage/pkg/cli/flag"
+	cliflag "github.com/nico612/voyage/pkg/cli/flag"
 	"github.com/nico612/voyage/pkg/cli/globalflag"
 	"github.com/nico612/voyage/pkg/errors"
 	"github.com/nico612/voyage/pkg/log"
@@ -28,7 +28,7 @@ type App struct {
 	name        string
 	description string
 
-	options CliOptions // 标志(flag)集
+	options CliOptions // App 配置文件需要实现该接口
 	runFunc RunFunc
 
 	noVersion bool // 不提供版本标志
@@ -156,7 +156,7 @@ func (a *App) buildCommand() {
 	}
 
 	// 添加标志集
-	var namedFlagSets flag2.NamedFlagSets
+	var namedFlagSets cliflag.NamedFlagSets
 	if a.options != nil {
 		namedFlagSets = a.options.Flags()
 		fs := cmd.Flags()
@@ -169,7 +169,7 @@ func (a *App) buildCommand() {
 		verflag.AddFlags(namedFlagSets.FlagSet("global"))
 	}
 
-	if !a.noConfig { // 添加config标志
+	if !a.noConfig { // 添加--config标志
 		addConfigFlag(a.basename, namedFlagSets.FlagSet("global"))
 	}
 
@@ -196,7 +196,7 @@ func (a *App) Command() *cobra.Command {
 
 func (a *App) runCommand(cmd *cobra.Command, args []string) error {
 	printWorkingDir()
-	flag2.PrintFlags(cmd.Flags())
+	cliflag.PrintFlags(cmd.Flags())
 
 	if !a.noVersion { // 打印版本并退出
 		verflag.PrintAndExitIfRequested()
@@ -275,20 +275,21 @@ func printFlags(flags *pflag.FlagSet) {
 	})
 }
 
-func addCmdTemplate(cmd *cobra.Command, namedFlagSets flag2.NamedFlagSets) {
+func addCmdTemplate(cmd *cobra.Command, namedFlagSets cliflag.NamedFlagSets) {
+
 	usageFmt := "Usage:\n  %s\n"
 	// 获取终端尺寸信息， 以便格式化输出
 	cols, _, _ := term.TerminalSize(cmd.OutOrStdout())
 
 	cmd.SetUsageFunc(func(cmd *cobra.Command) error {
 		fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine())
-		flag2.PrintSections(cmd.OutOrStderr(), namedFlagSets, cols)
+		cliflag.PrintSections(cmd.OutOrStderr(), namedFlagSets, cols)
 
 		return nil
 	})
 
 	cmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n\n"+usageFmt, cmd.Long, cmd.UseLine())
-		flag2.PrintSections(cmd.OutOrStdout(), namedFlagSets, cols)
+		cliflag.PrintSections(cmd.OutOrStdout(), namedFlagSets, cols)
 	})
 }

@@ -28,7 +28,7 @@ import (
 
 var errCodeDocPrefix = `# 错误码
 
-！！voyage 系统错误码列表，由 {{.}}codegen -type=int -doc{{.}} 命令生成，不要对此文件做任何更改。
+！！adminsrv 系统错误码列表，由 {{.}}codegen -type=int -doc{{.}} 命令生成，不要对此文件做任何更改。
 
 ## 功能说明
 
@@ -37,7 +37,7 @@ var errCodeDocPrefix = `# 错误码
 {{.}}{{.}}{{.}}json
 {
   "code": 100101,
-  "message": "Database error"
+  "message": "Database errors"
 }
 {{.}}{{.}}{{.}}
 
@@ -45,7 +45,7 @@ var errCodeDocPrefix = `# 错误码
 
 ## 错误码列表
 
-voyage 系统支持的错误码列表如下：
+adminsrv 系统支持的错误码列表如下：
 
 | Identifier | Code | HTTP Code | Description |
 | ---------- | ---- | --------- | ----------- |
@@ -56,7 +56,7 @@ var (
 	output     = flag.String("output", "", "output file name; default srcdir/<type>_string.go")
 	trimprefix = flag.String("trimprefix", "", "trim the `prefix` from the generated constant names")
 	buildTags  = flag.String("tags", "", "comma-separated list of build tags to apply")
-	doc        = flag.Bool("doc", false, "if true only generate error code documentation in markdown format")
+	doc        = flag.Bool("doc", false, "if true only generate errors code documentation in markdown format")
 )
 
 // Usage is a replacement usage function for the flags package.
@@ -195,7 +195,7 @@ type Package struct {
 }
 
 // parsePackage analyzes the single package constructed from the patterns and tags.
-// parsePackage exits if there is an error.
+// parsePackage exits if there is an errors.
 func (g *Generator) parsePackage(patterns []string, tags []string) {
 	cfg := &packages.Config{
 		// nolint: staticcheck
@@ -210,7 +210,7 @@ func (g *Generator) parsePackage(patterns []string, tags []string) {
 		log.Fatal(err)
 	}
 	if len(pkgs) != 1 {
-		log.Fatalf("error: %d packages found", len(pkgs))
+		log.Fatalf("errors: %d packages found", len(pkgs))
 	}
 	g.addPackage(pkgs[0])
 }
@@ -249,7 +249,7 @@ func (g *Generator) generate(typeName string) {
 		log.Fatalf("no values defined for type %s", typeName)
 	}
 	// Generate code that will fail if the constants change value.
-	g.Printf("\t// init register error codes defines in this source code to `github.com/marmotedu/errors`\n")
+	g.Printf("\t// init register errors codes defines in this source code to `github.com/marmotedu/errors`\n")
 	g.Printf("func init() {\n")
 	for _, v := range values {
 		code, description := v.ParseComment()
@@ -258,7 +258,7 @@ func (g *Generator) generate(typeName string) {
 	g.Printf("}\n")
 }
 
-// generateDocs produces error code markdown document for the named type.
+// generateDocs produces errors code markdown document for the named type.
 func (g *Generator) generateDocs(typeName string) {
 	values := make([]Value, 0, 100)
 	for _, file := range g.pkg.files {
@@ -294,9 +294,9 @@ func (g *Generator) format() []byte {
 	src, err := format.Source(g.buf.Bytes())
 	if err != nil {
 		// Should never happen, but can arise when developing this code.
-		// The user can compile the output to see the error.
-		log.Printf("warning: internal error: invalid Go generated: %s", err)
-		log.Printf("warning: compile the package to analyze the error")
+		// The user can compile the output to see the errors.
+		log.Printf("warning: internal errors: invalid Go generated: %s", err)
+		log.Printf("warning: compile the package to analyze the errors")
 
 		return g.buf.Bytes()
 	}
@@ -323,23 +323,23 @@ func (v *Value) String() string {
 	return v.str
 }
 
-// ParseComment parse comment to http code and error code description.
+// ParseComment parse comment to http code and errors code description.
 func (v *Value) ParseComment() (string, string) {
 	//reg := regexp.MustCompile(`\w\s*-\s*(\d{3})\s*:\s*([A-Z].*)\s*\.\n*`)
 
 	// 支持下面两种注释格式，如果没有定义 -200 则返回空code为空字符串：
 	// ErrSuccess - 200: OK.`
-	// ErrUnknown : Internal server error.`
+	// ErrUnknown : Internal server errors.`
 	reg := regexp.MustCompile(`\w\s*(\w+)\s*-?\s*(\d+)?:?\s*(.*)`)
 	if !reg.MatchString(v.comment) {
 		log.Printf("constant '%s' have wrong comment format, register with 500 as default", v.originalName)
-		return "500", "Internal server error"
+		return "500", "Internal server errors"
 	}
 
 	groups := reg.FindStringSubmatch(v.comment)
 
 	if len(groups) != 4 {
-		return "500", "Internal server error"
+		return "500", "Internal server errors"
 	}
 	// 返回code 和 message
 	code, msg := groups[2], groups[3]
@@ -424,7 +424,7 @@ func (f *File) genDecl(node ast.Node) bool {
 			i64, isInt := constant.Int64Val(value)
 			u64, isUint := constant.Uint64Val(value)
 			if !isInt && !isUint {
-				log.Fatalf("internal error: value of %s is not an integer: %s", name, value.String())
+				log.Fatalf("internal errors: value of %s is not an integer: %s", name, value.String())
 			}
 			if !isInt {
 				u64 = uint64(i64)

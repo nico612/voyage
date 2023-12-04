@@ -97,7 +97,8 @@ import (
 	"io"
 )
 
-// New 返回一个带有提供消息的错误。New 还记录了调用时的堆栈跟踪。
+// New returns an error with the supplied message.
+// New also records the stack trace at the point it was called.
 func New(message string) error {
 	return &fundamental{
 		msg:   message,
@@ -105,7 +106,9 @@ func New(message string) error {
 	}
 }
 
-// Errorf 根据格式说明符格式化并返回字符串值，满足error接口。Errorf还记录了调用时的堆栈跟踪。
+// Errorf formats according to a format specifier and returns the string
+// as a value that satisfies error.
+// Errorf also records the stack trace at the point it was called.
 func Errorf(format string, args ...interface{}) error {
 	return &fundamental{
 		msg:   fmt.Sprintf(format, args...),
@@ -113,15 +116,13 @@ func Errorf(format string, args ...interface{}) error {
 	}
 }
 
-// fundamental 这是一个带有消息和堆栈但没有调用者的错误。
+// fundamental is an error that has a message and a stack, but no caller.
 type fundamental struct {
 	msg string
 	*stack
 }
 
-func (f fundamental) Error() string {
-	return f.msg
-}
+func (f *fundamental) Error() string { return f.msg }
 
 func (f *fundamental) Format(s fmt.State, verb rune) {
 	switch verb {
@@ -139,8 +140,8 @@ func (f *fundamental) Format(s fmt.State, verb rune) {
 	}
 }
 
-// WithStack 将调用 WithStack 函数时的堆栈信息附加到错误 (error) 上。
-// 在错误处理时，将调用 WithStack 函数时的调用堆栈信息与错误绑定起来，以便在日志中记录或者进行错误信息展示时，能够更清晰地了解到错误发生的位置和调用链路。
+// WithStack annotates err with a stack trace at the point WithStack was called.
+// If err is nil, WithStack returns nil.
 func WithStack(err error) error {
 	if err == nil {
 		return nil
@@ -156,8 +157,8 @@ func WithStack(err error) error {
 	}
 
 	return &withStack{
-		error: err,
-		stack: callers(),
+		err,
+		callers(),
 	}
 }
 
@@ -168,7 +169,7 @@ type withStack struct {
 
 func (w *withStack) Cause() error { return w.error }
 
-// Unwrap 提供了对 Go 1.13 错误链的兼容性支持。
+// Unwrap provides compatibility for Go 1.13 error chains.
 func (w *withStack) Unwrap() error {
 	if e, ok := w.error.(interface{ Unwrap() error }); ok {
 		return e.Unwrap()
@@ -193,9 +194,9 @@ func (w *withStack) Format(s fmt.State, verb rune) {
 	}
 }
 
-// Wrap 用于对错误（error）进行包装，将调用 Wrap 函数的位置的堆栈信息与指定的消息绑定到错误上。
-// 这种包装错误的方式可以使得错误信息中包含了更多的上下文信息，
-// 例如调用 Wrap 函数时的堆栈信息和附加的消息，有助于更好地理解错误的来源和上下文。
+// Wrap returns an error annotating err with a stack trace
+// at the point Wrap is called, and the supplied message.
+// If err is nil, Wrap returns nil.
 func Wrap(err error, message string) error {
 	if err == nil {
 		return nil
@@ -219,7 +220,9 @@ func Wrap(err error, message string) error {
 	}
 }
 
-// Wrapf 用于将错误（error）进行格式化包装，并在包装后的错误中附加调用 Wrapf 函数时的堆栈信息和格式化的消息。
+// Wrapf returns an error annotating err with a stack trace
+// at the point Wrapf is called, and the format specifier.
+// If err is nil, Wrapf returns nil.
 func Wrapf(err error, format string, args ...interface{}) error {
 	if err == nil {
 		return nil
@@ -244,7 +247,8 @@ func Wrapf(err error, format string, args ...interface{}) error {
 	}
 }
 
-// WithMessage 用于为现有的错误（error）添加一个新的消息。
+// WithMessage annotates err with a new message.
+// If err is nil, WithMessage returns nil.
 func WithMessage(err error, message string) error {
 	if err == nil {
 		return nil
@@ -255,7 +259,8 @@ func WithMessage(err error, message string) error {
 	}
 }
 
-// WithMessagef 用于为已有的错误（error）添加一个格式化的消息。
+// WithMessagef annotates err with the format specifier.
+// If err is nil, WithMessagef returns nil.
 func WithMessagef(err error, format string, args ...interface{}) error {
 	if err == nil {
 		return nil
@@ -292,10 +297,10 @@ func (w *withMessage) Format(s fmt.State, verb rune) {
 }
 
 type withCode struct {
-	err    error
-	code   int
-	cause  error // 最顶层的错误原因
-	*stack       // 调用栈
+	err   error
+	code  int
+	cause error
+	*stack
 }
 
 func WithCode(code int, format string, args ...interface{}) error {
@@ -319,25 +324,26 @@ func WrapC(err error, code int, format string, args ...interface{}) error {
 	}
 }
 
-// Error 返回外部可见的错误消息。
+// Error return the externally-safe error message.
 func (w *withCode) Error() string { return fmt.Sprintf("%v", w) }
 
-// Cause 返回 withCode 错误的原因（cause）。
+// Cause return the cause of the withCode error.
 func (w *withCode) Cause() error { return w.cause }
 
-// Unwrap 实现 Go 1.13 错误链（error chain）特性中的 Unwrap() 方法。
+// Unwrap provides compatibility for Go 1.13 error chains.
 func (w *withCode) Unwrap() error { return w.cause }
 
-// Cause 返回错误的根本原因（如果可能的话）。
-// 如果错误值实现了以下接口，则具有原因：
+// Cause returns the underlying cause of the error, if possible.
+// An error value has a cause if it implements the following
+// interface:
 //
 //	type causer interface {
 //	       Cause() error
 //	}
 //
-// 如果错误没有实现Cause，则将返回原始错误。如果错误为nil，则将返回nil，无需进一步调查。
-// 通过逐级调用错误链中的 Cause() 方法，直到找到最底层的错误或者到达错误链的末尾，并返回错误链的根本原因。
-// 这种机制对于错误处理和排查错误来源十分有用。
+// If the error does not implement Cause, the original error will
+// be returned. If the error is nil, nil will be returned without further
+// investigation.
 func Cause(err error) error {
 	type causer interface {
 		Cause() error

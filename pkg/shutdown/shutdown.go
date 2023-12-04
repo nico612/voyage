@@ -84,7 +84,7 @@ func (gs *GracefulShutdown) AddShutdownManager(manager ShutdownManager) {
 // AddShutdownCallback 方法用于添加一个 ShutdownCallback，当关闭请求被触发时将会调用它。
 // 你可以提供任何实现了 ShutdownCallback 接口的内容，或者可以提供一个函数，如下所示：
 //
-//	AddShutdownCallback(shutdown.ShutdownFunc(func() error {
+//	AddShutdownCallback(shutdown.ShutdownFunc(func() errors {
 //	   // callback code
 //	   return nil
 //	}))
@@ -95,8 +95,8 @@ func (gs *GracefulShutdown) AddShutdownCallback(shutdownCallback ShutdownCallbac
 // SetErrorHandler 方法用于设置一个 ErrorHandler，当在 ShutdownCallback 或 ShutdownManager 中遇到错误时将会调用它。
 // 你可以提供任何实现了 ErrorHandler 接口的内容，或者可以提供一个函数，如下所示：
 //
-//	SetErrorHandler(shutdown.ErrorFunc(func (err error) {
-//		// handle error
+//	SetErrorHandler(shutdown.ErrorFunc(func (err errors) {
+//		// handle errors
 //	}))
 func (gs *GracefulShutdown) SetErrorHandler(errorHandler ErrorHandler) {
 	gs.errorHandler = errorHandler

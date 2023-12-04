@@ -4,6 +4,7 @@ import (
 	cliflag "github.com/nico612/voyage/pkg/cli/flag"
 )
 
+// CliOptions 该接口主要作用 要求 配置 提供标志和验证功能
 type CliOptions interface {
 	Flags() (nfs cliflag.NamedFlagSets) // (命名) 标志集
 	Validate() []error                  // 验证标志的方法

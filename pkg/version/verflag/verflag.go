@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package verflag defines utility functions to handle command line flags
-// related to version of voyage.
+// related to version of adminsrv.
 package verflag
 
 import (

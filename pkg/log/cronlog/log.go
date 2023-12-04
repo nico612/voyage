@@ -24,7 +24,7 @@ func (l logger) Info(msg string, args ...interface{}) {
 }
 
 func (l logger) Error(err error, msg string, args ...interface{}) {
-	l.zapLogger.Errorw(fmt.Sprintf(msg, args...), "error", err.Error())
+	l.zapLogger.Errorw(fmt.Sprintf(msg, args...), "errors", err.Error())
 }
 
 func (l logger) Flush() {

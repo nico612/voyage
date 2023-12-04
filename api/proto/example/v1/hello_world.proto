@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+// 在 Proto 文件中，package 语句定义了当前文件的命名空间，这对于组织和引用在该文件中定义的消息和服务非常有用。
+// 例如，如果有多个 proto 文件，它们可能会定义相同的消息名称，但通过使用不同的包声明，可以确保它们在最终生成的代码中彼此独立。
+// 声明该文件的命名空间为 votage.helloworld.v1
+package voyage.helloworld.v1;
+
+// 指定了生成 Go 语言代码时所使用的包路径。这个路径指明了生成的 Go 代码将被放置在项目中的哪个包下，方便使用者在 Go 项目中导入和调用。
+option go_package="github.com/nico612/adminsrv/api/gen/adminsrv/v1";
+
+import "google/api/annotations.proto";
+
+
+// 定义一个 Greeter 服务
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+
+    // 这里添加了google.api.http注释
+    option (google.api.http) = {
+      post: "/v1/example/echo",
+      body: "*",
+    };
+  }
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
+

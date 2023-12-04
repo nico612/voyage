@@ -102,12 +102,12 @@ func TestStartErrorGetsReturned(t *testing.T) {
 	gs := New()
 
 	gs.AddShutdownManager(SMStartFunc(func() error {
-		return errors.New("my-error")
+		return errors.New("my-errors")
 	}))
 
 	err := gs.Start()
-	if err == nil || err.Error() != "my-error" {
-		t.Error("Shutdown did not return my-error, got ", err)
+	if err == nil || err.Error() != "my-errors" {
+		t.Error("Shutdown did not return my-errors, got ", err)
 	}
 }
 
@@ -154,17 +154,17 @@ func TestErrorHandlerFromStartShutdown(t *testing.T) {
 	gs := New()
 
 	gs.SetErrorHandler(ErrorFunc(func(err error) {
-		if err.Error() == "my-error" {
+		if err.Error() == "my-errors" {
 			c <- 1
 		}
 	}))
 
 	gs.StartShutdown(SMShutdownStartFunc(func() error {
-		return errors.New("my-error")
+		return errors.New("my-errors")
 	}))
 
 	if len(c) != 1 {
-		t.Error("Expected 1 error from ShutdownStart, got ", len(c))
+		t.Error("Expected 1 errors from ShutdownStart, got ", len(c))
 	}
 }
 
@@ -173,17 +173,17 @@ func TestErrorHandlerFromFinishShutdown(t *testing.T) {
 	gs := New()
 
 	gs.SetErrorHandler(ErrorFunc(func(err error) {
-		if err.Error() == "my-error" {
+		if err.Error() == "my-errors" {
 			c <- 1
 		}
 	}))
 
 	gs.StartShutdown(SMFinishFunc(func() error {
-		return errors.New("my-error")
+		return errors.New("my-errors")
 	}))
 
 	if len(c) != 1 {
-		t.Error("Expected 1 error from ShutdownFinish, got ", len(c))
+		t.Error("Expected 1 errors from ShutdownFinish, got ", len(c))
 	}
 }
 
@@ -192,14 +192,14 @@ func TestErrorHandlerFromCallbacks(t *testing.T) {
 	gs := New()
 
 	gs.SetErrorHandler(ErrorFunc(func(err error) {
-		if err.Error() == "my-error" {
+		if err.Error() == "my-errors" {
 			c <- 1
 		}
 	}))
 
 	for i := 0; i < 15; i++ {
 		gs.AddShutdownCallback(ShutdownFunc(func(string) error {
-			return errors.New("my-error")
+			return errors.New("my-errors")
 		}))
 	}
 
@@ -208,7 +208,7 @@ func TestErrorHandlerFromCallbacks(t *testing.T) {
 	}))
 
 	if len(c) != 15 {
-		t.Error("Expected 15 error from ShutdownCallbacks, got ", len(c))
+		t.Error("Expected 15 errors from ShutdownCallbacks, got ", len(c))
 	}
 }
 
@@ -217,15 +217,15 @@ func TestErrorHandlerDirect(t *testing.T) {
 	gs := New()
 
 	gs.SetErrorHandler(ErrorFunc(func(err error) {
-		if err.Error() == "my-error" {
+		if err.Error() == "my-errors" {
 			c <- 1
 		}
 	}))
 
-	gs.ReportError(errors.New("my-error"))
+	gs.ReportError(errors.New("my-errors"))
 
 	if len(c) != 1 {
-		t.Error("Expected 1 error from ReportError call, got ", len(c))
+		t.Error("Expected 1 errors from ReportError call, got ", len(c))
 	}
 }
 

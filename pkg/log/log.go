@@ -465,6 +465,10 @@ func (l *zapLogger) L(ctx context.Context) *zapLogger {
 		lg.zapLogger = lg.zapLogger.With(zap.Any(KeyRequestID, requestID))
 	}
 
+	if userID := ctx.Value(KeyUserID); userID != nil {
+		lg.zapLogger = lg.zapLogger.With(zap.Any(KeyUserID, userID))
+	}
+
 	// 如有其他需要加的值可以在这里加
 
 	return lg
