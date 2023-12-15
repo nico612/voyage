@@ -25,13 +25,13 @@ func NewFeatureOptions() *FeatureOptions {
 	}
 }
 
-// ApplyTo 应用到 api server
-func (o *FeatureOptions) ApplyTo(c *server.Config) error {
-	c.EnableProfiling = o.EnableProfiling
-	c.EnableMetrics = o.EnableMetrics
-
-	return nil
-}
+//// ApplyTo 应用到 api server
+//func (o *FeatureOptions) ApplyTo(c *server.Config) error {
+//	c.EnableProfiling = o.EnableProfiling
+//	c.EnableMetrics = o.EnableMetrics
+//
+//	return nil
+//}
 
 // Validate 验证用户在程序启动时通过命令行输入的参数。
 func (o *FeatureOptions) Validate() []error {

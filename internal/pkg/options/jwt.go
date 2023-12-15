@@ -13,7 +13,7 @@ type JwtOptions struct {
 	Realm      string        `json:"realm"       mapstructure:"realm"`       // jwt 标识
 	Key        string        `json:"key"         mapstructure:"key"`         // 密钥
 	Timeout    time.Duration `json:"timeout"     mapstructure:"timeout"`     // 过期时间
-	MaxRefresh time.Duration `json:"max-refresh" mapstructure:"max-refresh"` // 刷新时间
+	MaxRefresh time.Duration `json:"max-refresh" mapstructure:"max-refresh"` // 刷新缓冲时间, 主要用于后端自动刷新功能，在过期时间内，如果 time.now + maxRefresh > 过期时间 也就是在刷新缓冲区内就自动刷新
 }
 
 func NewJwtOptions() *JwtOptions {
@@ -29,16 +29,16 @@ func NewJwtOptions() *JwtOptions {
 	}
 }
 
-func (s *JwtOptions) ApplyTo(c *server.Config) error {
-	c.Jwt = &server.JwtInfo{
-		Realm:      s.Realm,
-		Key:        s.Key,
-		Timeout:    s.Timeout,
-		MaxRefresh: s.MaxRefresh,
-	}
-
-	return nil
-}
+//func (s *JwtOptions) ApplyTo(c *server.Config) error {
+//	c.Jwt = &server.JwtInfo{
+//		Realm:      s.Realm,
+//		Key:        s.Key,
+//		Timeout:    s.Timeout,
+//		MaxRefresh: s.MaxRefresh,
+//	}
+//
+//	return nil
+//}
 
 // Validate 验证配置
 func (s *JwtOptions) Validate() []error {
@@ -57,7 +57,7 @@ func (s *JwtOptions) AddFlags(fs *pflag.FlagSet) {
 		return
 	}
 
-	fs.StringVar(&s.Realm, "jwt.realm", s.Realm, "Realm name to display to the user.")
+	fs.StringVar(&s.Realm, "jwt.realm", s.Realm, "Realm name to display to the sysuser.")
 	fs.StringVar(&s.Key, "jwt.key", s.Key, "Private key used to sign jwt token.")
 	fs.DurationVar(&s.Timeout, "jwt.timeout", s.Timeout, "JWT token timeout.")
 

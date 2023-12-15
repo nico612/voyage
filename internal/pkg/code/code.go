@@ -19,7 +19,7 @@ type ErrCode struct {
 	// HTTP status that should be used for the associated error code.
 	HTTP int
 
-	// External (user) facing error text.
+	// External (sysuser) facing error text.
 	Ext string
 
 	// Ref specify the reference document.

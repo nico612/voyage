@@ -294,7 +294,7 @@ func (g *Generator) format() []byte {
 	src, err := format.Source(g.buf.Bytes())
 	if err != nil {
 		// Should never happen, but can arise when developing this code.
-		// The user can compile the output to see the errors.
+		// The sysuser can compile the output to see the errors.
 		log.Printf("warning: internal errors: invalid Go generated: %s", err)
 		log.Printf("warning: compile the package to analyze the errors")
 

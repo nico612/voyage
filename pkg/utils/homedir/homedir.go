@@ -6,7 +6,7 @@ import (
 	"runtime"
 )
 
-// HomeDir returns the home directory for the current user.
+// HomeDir returns the home directory for the current sysuser.
 // On Windows:
 // 1. the first of %HOME%, %HOMEDRIVE%%HOMEPATH%, %USERPROFILE% containing a `.apimachinery\config` file is returned.
 // 2. if none of those locations contain a `.apimachinery\config` file, the first of

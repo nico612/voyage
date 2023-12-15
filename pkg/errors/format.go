@@ -19,7 +19,7 @@ type formatInfo struct {
 //
 // Verbs:
 //
-//	%s  - Returns the user-safe error string mapped to the error code or
+//	%s  - Returns the sysuser-safe error string mapped to the error code or
 //	  ┊   the error message if none is specified.
 //	%v      Alias for %s
 //

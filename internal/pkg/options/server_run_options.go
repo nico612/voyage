@@ -1,7 +1,6 @@
 package options
 
 import (
-	"github.com/nico612/voyage/internal/pkg/server"
 	"github.com/spf13/pflag"
 )
 
@@ -18,8 +17,9 @@ type ServerRunOptions struct {
 	Mode          string   `json:"mode"        mapstructure:"mode"`
 	Healthz       bool     `json:"healthz"     mapstructure:"healthz"`
 	Middlewares   []string `json:"middlewares" mapstructure:"middlewares"`            // 中间件，如果需要根据配置来配置中间件
-	UseMultipoint bool     `json:"use-multipoint" mapstructure:"use-multipoint"`      // 多点登录
+	UseMultipoint bool     `json:"use-multipoint" mapstructure:"use-multipoint"`      // 多点登录，默认false 表示单点登录
 	IplimitCount  int32    `json:"iplimit-count"        mapstructure:"iplimit-count"` // ip 限制数量
+	RouterPrefix  string   `json:"router-prefix" mapstructure:"router-prefix"`        // 路由前缀
 }
 
 func NewServerRunOptions() *ServerRunOptions {
@@ -31,14 +31,15 @@ func NewServerRunOptions() *ServerRunOptions {
 	}
 }
 
-// ApplyTo 应用到 api server 配置中
-func (s *ServerRunOptions) ApplyTo(c *server.Config) error {
-	c.Mode = s.Mode
-	c.Healthz = s.Healthz
-	c.Middlewares = s.Middlewares
-
-	return nil
-}
+//
+//// ApplyTo 应用到 api server 配置中
+//func (s *ServerRunOptions) ApplyTo(c *server.Config) error {
+//	c.Mode = s.Mode
+//	c.Healthz = s.Healthz
+//	c.Middlewares = s.Middlewares
+//
+//	return nil
+//}
 
 // Validate 检查 ServerRunOptions.
 func (s *ServerRunOptions) Validate() []error {

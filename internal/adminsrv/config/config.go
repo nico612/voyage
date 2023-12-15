@@ -11,6 +11,7 @@ type Config struct {
 
 // CreateConfigFromOptions 根据配置选项创建配置
 func CreateConfigFromOptions(opts *options.Options) (*Config, error) {
+
 	cfg = &Config{opts}
 	return cfg, nil
 }

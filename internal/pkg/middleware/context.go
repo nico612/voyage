@@ -6,6 +6,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nico612/voyage/internal/adminsrv/auth"
 	"github.com/nico612/voyage/pkg/log"
 )
 
@@ -18,7 +19,7 @@ func Context() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 注入上下文
 		c.Set(log.KeyRequestID, c.GetString(XRequestIDKey))
-		c.Set(log.KeyUserID, c.GetString(UserIDKey))
+		c.Set(log.KeyUserID, auth.GetUserID(c))
 		c.Next()
 	}
 }

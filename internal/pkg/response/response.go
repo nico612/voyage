@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nico612/voyage/internal/pkg/code"
 	"github.com/nico612/voyage/pkg/errors"
+	"github.com/nico612/voyage/pkg/log"
 	"net/http"
 )
 
@@ -34,7 +35,7 @@ type Response struct {
 
 	// Message contains the detail of this message.
 	// This message is suitable to be exposed to external
-	Message string `json:"message"`
+	Message string `json:"msg"`
 }
 
 func Result(c *gin.Context, coder errors.Coder, data interface{}) {
@@ -62,6 +63,8 @@ func Failed(c *gin.Context, err error, payload ...interface{}) {
 	if coder.Code() == 1 {
 		coder = unkonwnCoder
 	}
+
+	log.Errorf("%#+v", err)
 
 	var data interface{}
 	switch len(payload) {

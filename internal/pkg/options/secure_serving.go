@@ -2,7 +2,6 @@ package options
 
 import (
 	"fmt"
-	"github.com/nico612/voyage/internal/pkg/server"
 	"github.com/spf13/pflag"
 	"net"
 	"path"
@@ -58,20 +57,20 @@ func NewSecureServingOptions() *SecureServingOptions {
 	}
 }
 
-// ApplyTo 将配置信息引用到 api server 配置中
-func (s *SecureServingOptions) ApplyTo(c *server.Config) error {
-	// SecureServing is required to serve https
-	c.SecureServing = &server.SecureServingInfo{
-		BindAddress: s.BindAddress,
-		BindPort:    s.BindPort,
-		CertKey: server.CertKey{
-			CertFile: s.ServerCert.CertKey.CertFile,
-			KeyFile:  s.ServerCert.CertKey.KeyFile,
-		},
-	}
-
-	return nil
-}
+//// ApplyTo 将配置信息引用到 api server 配置中
+//func (s *SecureServingOptions) ApplyTo(c *server.Config) error {
+//	// SecureServing is required to serve https
+//	c.SecureServing = &server.SecureServingInfo{
+//		BindAddress: s.BindAddress,
+//		BindPort:    s.BindPort,
+//		CertKey: server.CertKey{
+//			CertFile: s.ServerCert.CertKey.CertFile,
+//			KeyFile:  s.ServerCert.CertKey.KeyFile,
+//		},
+//	}
+//
+//	return nil
+//}
 
 // Validate 验证用户在程序启动时通过命令行输入的参数。
 func (s *SecureServingOptions) Validate() []error {

@@ -4,12 +4,12 @@ server:
   mode: debug  # server mode: release, debug, test，默认 release
   healthz: true # 是否开启健康检查，如果开启会安装 /healthz 路由，默认 true
   middlewares:  # 指定需要配置的中间件
-  use-multipoint: false # 多点登录
+  use-multipoint: true # 是否使用多点登录拦截
   iplimit-count: 15000 # IP限制次数 一个小时15000次
   iplimit-time: 3600 #  IP限制一个小时
   max-ping-count: 3 # http 服务启动后，自检尝试次数，默认 3
   oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
-
+  router-prefix: admin
 
 # GRPC 服务配置
 grpc:
@@ -32,7 +32,6 @@ secure:
       cert-file:  # 包含 x509 证书的文件路径，用 HTTPS 认证
       private-key-file: # TLS 私钥
 
-
 gateway:
   bind-address: 0.0.0.0
   bind-port: 9090
@@ -43,14 +42,14 @@ jwt:
   realm: JWT # jwt 标识
   key: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
   timeout: 24h # token 过期时间(小时)
-  max-refresh: 24h # token 更新时间(小时)
+  max-refresh: 1h # token 更新时间(小时)
 
 # zap logger configuration
 log:
   name: apiserver # Logger的名字
   development: true # 是否是开发模式。如果是开发模式，会对DPanicLevel进行堆栈跟踪。
   level: debug # 日志级别，优先级从低到高依次为：debug, info, warn, errors, dpanic, panic, fatal。
-  format: console # 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。
+  format: console # 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。生产环境建议使用 json
   enable-color: true # 是否开启颜色输出，true:是，false:否
   disable-caller: false # 是否开启 caller，如果开启会在日志中显示调用日志所在的文件、函数和行号
   disable-stacktrace: false # 是否再panic及以上级别禁止打印堆栈信息
@@ -58,19 +57,12 @@ log:
   error-output-paths: _output/log/adminsrv-adminsrv-server.errors.log # zap内部(非业务)错误日志输出路径，多个输出，逗号分开
 # Redis 配置
 redis:
-  host: 127.0.0.1 # redis 地址，默认 127.0.0.1:6379
-  port: 6379 # redis 端口，默认 6379
-  password:  # redis 密码
-  #addrs:
-  #master-name: # redis 集群 master 名称
-  #username: # redis 登录用户名
-  #database: # redis 数据库
-  #optimisation-max-idle:  # redis 连接池中的最大空闲连接数
-  #optimisation-max-active: # 最大活跃连接数
-  #timeout: # 连接 redis 时的超时时间
-  #enable-cluster: # 是否开启集群模式
-  #use-ssl: # 是否启用 TLS
-  #ssl-insecure-skip-verify: # 当连接 redis 时允许使用自签名证书
+  addr: 127.0.0.1:6379 # single 地址，默认 127.0.0.1:6379
+  password:  # single 密码
+  db:
+  read-timeout: 2s
+  write-timeout: 0.3s
+  dial-timeout: 0.3s
 
 # mysql connect configuration
 # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
@@ -78,7 +70,7 @@ mysql:
   host: 127.0.0.1:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
   username: root # MySQL 用户名(建议授权最小权限集)
   password: 12345678 # MySQL 用户密码
-  database: adminsrv # adminsrv 系统所用的数据库名
+  database: voyage # adminsrv 系统所用的数据库名
   max-idle-connections: 100 # MySQL 最大空闲连接数，默认 100
   max-open-connections: 100 # MySQL 最大打开的连接数，默认 100
   max-connection-life-time: 10s # 空闲连接最大存活时间，默认 10s
@@ -103,7 +95,7 @@ captcha:
   key-long: 6     # 验证码长度
   img-width: 240  # 图形宽度
   img-height: 80  # 图形高
-  open-captcha: 0 # 0代表一直开启，大于0代表限制次数
+  open-captcha: 0 # 0代表一直开启，大于0代表出现错该误次数后才开启验证功能
   open-captcha-timeout: 3600 # 缓存超时时间 open-captcha大于0时才生效
 
 # local configuration

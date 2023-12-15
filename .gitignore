@@ -43,3 +43,6 @@ api/gen/
 api/doc/
 configs/
 
+.tmp
+
+.env

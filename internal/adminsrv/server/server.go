@@ -5,7 +5,9 @@ import (
 	"github.com/nico612/voyage/internal/adminsrv/store"
 	"github.com/nico612/voyage/internal/adminsrv/store/cache"
 	"github.com/nico612/voyage/internal/adminsrv/store/mysql"
+	"github.com/nico612/voyage/internal/adminsrv/store/redis"
 	genericServer "github.com/nico612/voyage/internal/pkg/server"
+	"github.com/nico612/voyage/internal/pkg/utils/validator"
 	"github.com/nico612/voyage/pkg/log"
 	"github.com/nico612/voyage/pkg/shutdown"
 	"github.com/nico612/voyage/pkg/shutdown/managers/posixsignal"
@@ -39,20 +41,29 @@ func CreateAPIServer(cfg *config.Config) (*apiServer, error) {
 
 	// TODO GRPC 服务
 
-	// 服务扩展配置
-	//extraConfig, err := buildExtraConfig(cfg)
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	//extraServer, err := extraConfig.com
-
 	// 初始化 mysql
-	dbStore, _ := mysql.GetMySQLStoreOr(cfg.MySQLOptions)
-	store.SetStore(dbStore)
+	dbStore, err := mysql.GetMySQLStoreOr(cfg.MySQLOptions)
+	if err != nil {
+		log.Fatalf("Failed to get cache instance: %s", err.Error())
+		return nil, err
+	}
+	store.SetClient(dbStore)
 
-	// 初始化缓存
-	_ = cache.GetLocalCacheIns(local_cache.SetDefaultExpire(cfg.JwtOptions.Timeout))
+	// redis
+	_, err = redis.CreateRedisOr(cfg.RedisOptions)
+	if err != nil {
+		log.Fatalf("Failed to get cache instance: %s", err.Error())
+		return nil, err
+	}
+
+	// 初始化缓存, 并加载所有的 黑名单 jwt token 到本地缓存
+	localCache := cache.GetLocalCacheIns(local_cache.SetDefaultExpire(cfg.JwtOptions.Timeout))
+	if err = localCache.LoadAllJwtBlackList(dbStore); err != nil {
+		log.Errorf("load all jwt black list error = %s", err.Error())
+	}
+
+	// TODO 初始化参数验证器， 不太好用需要修改
+	validator.Initialize()
 
 	server := &apiServer{
 		gs:               gs,
@@ -64,16 +75,19 @@ func CreateAPIServer(cfg *config.Config) (*apiServer, error) {
 
 }
 
-// PrepareRun 主要负责运行服务前的 路由、redis 等初始化 工作
+// PrepareRun 主要负责运行服务前的 路由、single 等初始化 工作
 func (s *apiServer) PrepareRun() *preparedAPIServer {
 
+	// 路由
 	NewRouter(s.genericApoServer.Engine, s.cfg).Initializer()
-
-	// 初始化 redis
 
 	// 添加优雅关停回调
 	s.gs.AddShutdownCallback(shutdown.ShutdownFunc(func(string) error {
 		// 关闭数据库连接
+		mysqlstore, _ := mysql.GetMySQLStoreOr(nil)
+		if mysqlstore != nil {
+			_ = mysqlstore.Close()
+		}
 
 		// 关闭 grpc 服务
 
@@ -106,23 +120,14 @@ func (s *preparedAPIServer) Run() error {
 // 构建 http、https 服务配置
 func buildGenericConfig(cfg *config.Config) (genericConfig *genericServer.Config, lastErr error) {
 
-	genericConfig = genericServer.NewConfig() // 默认配置
-
-	if lastErr = cfg.GenericServerRunOptions.ApplyTo(genericConfig); lastErr != nil {
-		return
+	genericConfig = &genericServer.Config{
+		InsecureServing: &genericServer.InsecureServingInfo{
+			Address: cfg.InsecureServing.Address(),
+		},
+		Mode:            cfg.GenericServerRunOptions.Mode,
+		Healthz:         cfg.GenericServerRunOptions.Healthz,
+		EnableProfiling: true,
+		EnableMetrics:   true,
 	}
-
-	if lastErr = cfg.FeatureOptions.ApplyTo(genericConfig); lastErr != nil {
-		return
-	}
-
-	if lastErr = cfg.SecureServing.ApplyTo(genericConfig); lastErr != nil {
-		return
-	}
-
-	if lastErr = cfg.InsecureServing.ApplyTo(genericConfig); lastErr != nil {
-		return
-	}
-
 	return
 }

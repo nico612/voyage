@@ -25,8 +25,20 @@ const (
 	// ErrTokenInvalid - 401: Token invalid.
 	ErrTokenInvalid
 
+	// ErrTokenExpired : Token Expired.
+	ErrTokenExpired
+
 	// ErrPageNotFound - 404: Page not found.
 	ErrPageNotFound
+
+	// ErrGetCaptcha : 图形验证码获取失败
+	ErrGetCaptcha
+
+	// ErrInvalidCaptcha : 无效的图形验证码
+	ErrInvalidCaptcha
+
+	// ErrInsufficientPermissions Insufficient permissions
+	ErrInsufficientPermissions
 )
 
 // common: database errors.
@@ -37,7 +49,7 @@ const (
 
 // common: authorization and authentication errors.
 const (
-	// ErrEncrypt - 401: Error occurred while encrypting the user password.
+	// ErrEncrypt - 401: Error occurred while encrypting the sysuser password.
 	ErrEncrypt int = iota + 100201
 
 	// ErrSignatureInvalid - 401: Signature is invalid.

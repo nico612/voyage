@@ -15,10 +15,10 @@ type Coder interface {
 	// HTTP status that should be used for the associated error code.
 	HTTPStatus() int
 
-	// External (user) facing error text.
+	// External (sysuser) facing error text.
 	String() string
 
-	// Reference returns the detail documents for user.
+	// Reference returns the detail documents for sysuser.
 	Reference() string
 
 	// Code returns the code of the coder
@@ -32,7 +32,7 @@ type defaultCoder struct {
 	// HTTP status that should be used for the associated error code.
 	HTTP int
 
-	// External (user) facing error text.
+	// External (sysuser) facing error text.
 	Ext string
 
 	// Ref specify the reference document.
@@ -70,7 +70,7 @@ func (coder defaultCoder) Reference() string {
 var codes = map[int]Coder{}
 var codeMux = &sync.Mutex{}
 
-// Register register a user define error code.
+// Register register a sysuser define error code.
 // It will overrid the exist code.
 func Register(coder Coder) {
 	if coder.Code() == 0 {
@@ -83,7 +83,7 @@ func Register(coder Coder) {
 	codes[coder.Code()] = coder
 }
 
-// MustRegister register a user define error code.
+// MustRegister register a sysuser define error code.
 // It will panic when the same Code already exist.
 func MustRegister(coder Coder) {
 	if coder.Code() == 0 {

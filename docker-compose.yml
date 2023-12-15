@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+
+  adminer:
+    image: golang:1.19
+    container_name: adminer
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+
+    ports:
+      - "9002:9002"
+    command: go run -v cmd/voyage-admin-server/main.go -c configs/config.docker.yaml
+    networks:
+      - default

@@ -2,10 +2,7 @@ package options
 
 import (
 	"fmt"
-	"github.com/nico612/voyage/internal/pkg/server"
 	"github.com/spf13/pflag"
-	"net"
-	"strconv"
 )
 
 // InsecureServingOptions http 服务配置
@@ -21,14 +18,18 @@ func NewInsecureServingOptions() *InsecureServingOptions {
 	}
 }
 
-// ApplyTo 将配置应用到 api server 配置中
-func (s *InsecureServingOptions) ApplyTo(c *server.Config) error {
-	c.InsecureServing = &server.InsecureServingInfo{
-		Address: net.JoinHostPort(s.BindAddress, strconv.Itoa(s.BindPort)),
-	}
-
-	return nil
+func (i *InsecureServingOptions) Address() string {
+	return fmt.Sprintf("%s:%d", i.BindAddress, i.BindPort)
 }
+
+// ApplyTo 将配置应用到 api server 配置中
+//func (s *InsecureServingOptions) ApplyTo(c *server.Config) error {
+//	c.InsecureServing = &server.InsecureServingInfo{
+//		Address: net.JoinHostPort(s.BindAddress, strconv.Itoa(s.BindPort)),
+//	}
+//
+//	return nil
+//}
 
 // Validate 验证用户在程序启动时通过命令行输入的参数。
 func (s *InsecureServingOptions) Validate() []error {

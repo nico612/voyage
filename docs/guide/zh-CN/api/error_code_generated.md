@@ -21,14 +21,22 @@ voyage 系统支持的错误码列表如下：
 
 | Identifier | Code | HTTP Code | Description |
 | ---------- | ---- | --------- | ----------- |
+| ErrUserNotFound | 110101 | 200 | User not found. |
+| ErrUserAlreadyExist | 110102 | 200 | User already exist. |
+| ErrFailedAuthentication | 110103 | 200 | username or password error |
+| ErrCreateBaseMenu | 110201 | 200 | 创建菜单失败 |
 | ErrSuccess | 100000 | 200 | OK. |
 | ErrUnknown | 100001 | 500 | Internal server error. |
 | ErrBind | 100002 | 400 | Error occurred while binding the request body to the struct. |
 | ErrValidation | 100003 | 400 | Validation failed. |
 | ErrTokenInvalid | 100004 | 401 | Token invalid. |
-| ErrPageNotFound | 100005 | 404 | Page not found. |
+| ErrTokenExpired | 100005 | 200 | Token Expired. |
+| ErrPageNotFound | 100006 | 404 | Page not found. |
+| ErrGetCaptcha | 100007 | 200 | 图形验证码获取失败 |
+| ErrInvalidCaptcha | 100008 | 200 | 无效的图形验证码 |
+| ErrInsufficientPermissions | 100009 | 200 | Insufficient permissions |
 | ErrDatabase | 100101 | 500 | Database error. |
-| ErrEncrypt | 100201 | 401 | Error occurred while encrypting the user password. |
+| ErrEncrypt | 100201 | 401 | Error occurred while encrypting the sysuser password. |
 | ErrSignatureInvalid | 100202 | 401 | Signature is invalid. |
 | ErrExpired | 100203 | 401 | Token expired. |
 | ErrInvalidAuthHeader | 100204 | 401 | Invalid authorization header. |

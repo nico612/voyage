@@ -20,7 +20,7 @@ type Options struct {
 	JwtOptions              *genericoptions.JwtOptions             `json:"jwt"      mapstructure:"jwt"`
 	Log                     *log.Options                           `json:"log"      mapstructure:"log"`
 	FeatureOptions          *genericoptions.FeatureOptions         `json:"feature"  mapstructure:"feature"` // 特性配置
-	Captcha                 genericoptions.Captcha                 `json:"captcha" mapstructure:"captcha"`  // 图形验证码
+	Captcha                 *genericoptions.Captcha                `json:"captcha" mapstructure:"captcha"`  // 图形验证码
 }
 
 func NewOptions() *Options {
@@ -51,7 +51,7 @@ func (o *Options) Flags() (fss cliflag.NamedFlagSets) {
 	o.JwtOptions.AddFlags(fss.FlagSet("jwt"))
 	o.GRPCOptions.AddFlags(fss.FlagSet("grpc"))
 	o.MySQLOptions.AddFlags(fss.FlagSet("mysql"))
-	o.RedisOptions.AddFlags(fss.FlagSet("redis"))
+	o.RedisOptions.AddFlags(fss.FlagSet("single"))
 	o.FeatureOptions.AddFlags(fss.FlagSet("features"))
 	o.InsecureServing.AddFlags(fss.FlagSet("insecure serving"))
 	o.SecureServing.AddFlags(fss.FlagSet("secure serving"))

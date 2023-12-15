@@ -25,7 +25,7 @@ func TestAddGlobalFlags(t *testing.T) {
 		actualFlag = append(actualFlag, flag.Name)
 	})
 
-	// Get all flags from flags.CommandLine, except flag `test.*`.
+	// GetUserWithUsername all flags from flags.CommandLine, except flag `test.*`.
 	wantedFlag := []string{"help"}
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.VisitAll(func(flag *pflag.Flag) {

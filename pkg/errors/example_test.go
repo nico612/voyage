@@ -97,7 +97,7 @@ func ExampleWrap() {
 func fn() error {
 	e1 := New("error")
 	e2 := Wrap(e1, "inner")
-	e3 := Wrap(e2, "middle")
+	e3 := Wrap(e2, "middleware")
 	return Wrap(e3, "outer")
 }
 
@@ -135,7 +135,7 @@ func ExampleWrap_extended() {
 	// github.com/marmotedu/errors_test.fn
 	// 	  /home/dfc/src/github.com/marmotedu/errors/example_test.go:48: inner
 	// github.com/marmotedu/errors_test.fn
-	//        /home/dfc/src/github.com/marmotedu/errors/example_test.go:49: middle
+	//        /home/dfc/src/github.com/marmotedu/errors/example_test.go:49: middleware
 	// github.com/marmotedu/errors_test.fn
 	//      /home/dfc/src/github.com/marmotedu/errors/example_test.go:50: outer
 }

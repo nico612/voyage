@@ -16,7 +16,7 @@ type Options struct {
 	Database              string
 	Engine                string           //数据库引擎，默认InnoDB
 	Prefix                string           // 表前缀
-	Singular              bool             //是否开启全局禁用复数，true表示开启
+	Singular              bool             // 是否开启全局禁用复数，true表示开启
 	MaxOpenConnections    int              // 最大连接数
 	MaxConnectionLifeTime time.Duration    // 空闲连接最大存活时间
 	MaxIdleConnections    time.Duration    // 最大空闲连接数
@@ -25,7 +25,7 @@ type Options struct {
 }
 
 func New(opts *Options) (*gorm.DB, error) {
-	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8&parseTime=%t&loc=%s`,
+	dsn := fmt.Sprintf(`%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=%t&loc=%s`,
 		opts.Username,
 		opts.Password,
 		opts.Host,

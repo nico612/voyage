@@ -8,7 +8,7 @@ include scripts/make-rules/tools.mk
 include scripts/make-rules/gen.mk
 
 .PHONY: init
-# init env
+# init .env
 init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
@@ -16,9 +16,9 @@ init:
 
 
 
-## gen: Generate all necessary files, such as errors code files.
-.PHONY: gen
-gen:
+## generate: Generate all necessary files, such as errors code files.
+.PHONY: generate
+generate:
 	@$(MAKE) gen.run
 
 .PHONY: protoc
